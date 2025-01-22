@@ -59,7 +59,7 @@ def get_ip_records(ns_list):
 
 # Perform GeoIP lookups
 def get_geoip_info(ip_list):
-    geoip_ans_reader = geoip2.database.Reader('data/GeoLite2-ANS.mmdb')
+    geoip_ans_reader = geoip2.database.Reader('data/GeoLite2-ASN.mmdb')
     geoip_city_reader = geoip2.database.Reader('data/GeoLite2-City.mmdb')
     geoip_country_reader = geoip2.database.Reader('data/GeoLite2-Country.mmdb')
     results = []
@@ -70,7 +70,7 @@ def get_geoip_info(ip_list):
                 country = geoip_country_reader.country(ip).country.name or "null"
                 results.append({"IP": ip, "City": city, "Country": country, "ANS": geoip_ans_reader})
         except (geoip2.errors.AddressNotFoundError, ValueError):
-            results.append({"IP": ip, "City": "null", "Country": "null"})
+            results.append({"IP": ip, "City": "null", "Country": "null","ANS": "null"})
     geoip_city_reader.close()
     geoip_country_reader.close()
     return results
