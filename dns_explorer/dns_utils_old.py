@@ -5,7 +5,7 @@ import json
 import geoip2.database
 import ipaddress
 from concurrent.futures import ThreadPoolExecutor
-from tqdm import tqdm
+
 
 # Helper function to execute a shell command
 def run_dig_command(command):
@@ -14,6 +14,7 @@ def run_dig_command(command):
         return result.stdout.strip().split('\n')
     except Exception as e:
         return f"Error executing command {command}: {str(e)}"
+
 
 # Log errors to a file
 def log_error(tld, domain, error_message):
@@ -24,10 +25,12 @@ def log_error(tld, domain, error_message):
         file.write(f"[{datetime.now()}] Domain: {domain} - Error: {error_message}\n")
     print(f"Error logged for domain {domain}: {error_message}")
 
+
 # Fetch NS records for a TLD
 def get_ns_records(tld):
     command = f"dig NS {tld} +short"
     return run_dig_command(command)
+
 
 # Fetch NS details for a domain
 def get_ns_details(domain, ns_server):
@@ -38,6 +41,7 @@ def get_ns_details(domain, ns_server):
         "authority": run_dig_command(authority_command),
         "answer": run_dig_command(answer_command)
     }
+
 
 # Fetch A and AAAA records
 def get_ip_records(ns_list):
@@ -51,6 +55,7 @@ def get_ip_records(ns_list):
             "AAAA_record": run_dig_command(aaaa_command)
         })
     return results
+
 
 # Perform GeoIP lookups
 def get_geoip_info(ip_list):
@@ -72,6 +77,7 @@ def get_geoip_info(ip_list):
     geoip_country_reader.close()
     return results
 
+
 # Fetch MX, A, and AAAA records
 def get_mx_records(domain, ip_list):
     results = []
@@ -87,11 +93,13 @@ def get_mx_records(domain, ip_list):
         })
     return results
 
+
 # Check DNSSEC using `delv`
 def check_dnssec(domain):
     command = f"delv +yaml {domain}"
     output = run_dig_command(command)
     return {"command": command, "output": output}
+
 
 # Save output to JSON file
 def save_output(tld, domain, output_data):
@@ -103,25 +111,20 @@ def save_output(tld, domain, output_data):
         json.dump(output_data, file, indent=4)
     print(f"Saved output for {domain} to {output_file}")
 
+
 # Process a single domain
 def process_domain(domain):
     try:
-        print(f"Processing domain: {domain}...")
         tld = domain.split('.')[-2] + '.' + domain.split('.')[-1]
         ns_records = get_ns_records(tld)
         if not ns_records:
             log_error(tld, domain, "No NS records found")
             return
 
-        print(f"Fetching NS details for {domain}...")
         ns_details = [get_ns_details(domain, ns) for ns in ns_records]
-        print(f"Fetching IP records for {domain}...")
         ip_records = get_ip_records([ns['NS_Server'] for ns in ns_details])
-        print(f"Performing GeoIP lookups for {domain}...")
         geoip_info = get_geoip_info([ip['A_record'][0] for ip in ip_records if ip['A_record']])
-        print(f"Fetching MX records for {domain}...")
         mx_records = get_mx_records(domain, [ip['A_record'][0] for ip in ip_records if ip['A_record']])
-        print(f"Checking DNSSEC for {domain}...")
         dnssec_info = check_dnssec(domain)
 
         output_data = {
@@ -135,24 +138,16 @@ def process_domain(domain):
             "dnssec_info": dnssec_info
         }
         save_output(tld, domain, output_data)
-        print(f"Finished processing {domain}")
     except Exception as e:
         log_error("unknown", domain, str(e))
 
-# Process a list of domains with progress bar
-def process_domains(domains, use_threads=True):
+
+# Process a list of domains
+def process_domains(domains, use_threads):
     if use_threads:
         with ThreadPoolExecutor(max_workers=10) as executor:
-            with tqdm(total=len(domains), desc="Processing Domains", unit="domain") as pbar:
-                futures = [executor.submit(process_domain, domain) for domain in domains]
-                for future in futures:
-                    future.add_done_callback(lambda p: pbar.update(1))
+            for domain in domains:
+                executor.submit(process_domain, domain)
     else:
-        with tqdm(domains, desc="Processing Domains", unit="domain") as pbar:
-            for domain in pbar:
-                process_domain(domain)
-
-# Example usage
-if __name__ == "__main__":
-    domains = ["example.com", "google.com"]  # Replace with your domain list
-    process_domains(domains)
+        for domain in domains:
+            process_domain(domain)
