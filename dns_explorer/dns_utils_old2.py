@@ -6,11 +6,6 @@ import geoip2.database
 import ipaddress
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
-from colorama import Fore, Style, init
-import time
-
-# Initialize colorama
-init(autoreset=True)
 
 # Helper function to execute a shell command
 def run_dig_command(command):
@@ -27,7 +22,7 @@ def log_error(tld, domain, error_message):
     os.makedirs(os.path.dirname(error_log_file), exist_ok=True)
     with open(error_log_file, 'a') as file:
         file.write(f"[{datetime.now()}] Domain: {domain} - Error: {error_message}\n")
-    print(f"{Fore.RED}Error logged for domain {domain}: {error_message}")
+    print(f"Error logged for domain {domain}: {error_message}")
 
 # Fetch NS records for a TLD
 def get_ns_records(tld):
@@ -106,39 +101,27 @@ def save_output(tld, domain, output_data):
     output_file = os.path.join(output_dir, f"{domain}.json")
     with open(output_file, 'w') as file:
         json.dump(output_data, file, indent=4)
-    print(f"{Fore.GREEN}Saved output for {domain} to {output_file}")
-
-# Display progress animation
-def show_spinner(message, duration=3):
-    spinner = ['|', '/', '-', '\\']
-    end_time = time.time() + duration
-    i = 0
-    while time.time() < end_time:
-        print(f"{Fore.CYAN}\r{message} {spinner[i % len(spinner)]}", end="", flush=True)
-        time.sleep(0.1)
-        i += 1
-    print(f"\r{message}... Done!{Style.RESET_ALL}")
+    print(f"Saved output for {domain} to {output_file}")
 
 # Process a single domain
 def process_domain(domain):
     try:
-        print(f"{Fore.YELLOW}Processing domain: {domain}...")
+        print(f"Processing domain: {domain}...")
         tld = domain.split('.')[-2] + '.' + domain.split('.')[-1]
-        show_spinner(f"Fetching NS records for {domain}")
         ns_records = get_ns_records(tld)
         if not ns_records:
             log_error(tld, domain, "No NS records found")
             return
 
-        show_spinner(f"Fetching NS details for {domain}")
+        print(f"Fetching NS details for {domain}...")
         ns_details = [get_ns_details(domain, ns) for ns in ns_records]
-        show_spinner(f"Fetching IP records for {domain}")
+        print(f"Fetching IP records for {domain}...")
         ip_records = get_ip_records([ns['NS_Server'] for ns in ns_details])
-        show_spinner(f"Performing GeoIP lookups for {domain}")
+        print(f"Performing GeoIP lookups for {domain}...")
         geoip_info = get_geoip_info([ip['A_record'][0] for ip in ip_records if ip['A_record']])
-        show_spinner(f"Fetching MX records for {domain}")
+        print(f"Fetching MX records for {domain}...")
         mx_records = get_mx_records(domain, [ip['A_record'][0] for ip in ip_records if ip['A_record']])
-        show_spinner(f"Checking DNSSEC for {domain}")
+        print(f"Checking DNSSEC for {domain}...")
         dnssec_info = check_dnssec(domain)
 
         output_data = {
@@ -152,7 +135,7 @@ def process_domain(domain):
             "dnssec_info": dnssec_info
         }
         save_output(tld, domain, output_data)
-        print(f"{Fore.GREEN}Finished processing {domain}")
+        print(f"Finished processing {domain}")
     except Exception as e:
         log_error("unknown", domain, str(e))
 
@@ -160,12 +143,12 @@ def process_domain(domain):
 def process_domains(domains, use_threads=True):
     if use_threads:
         with ThreadPoolExecutor(max_workers=10) as executor:
-            with tqdm(total=len(domains), desc=f"{Fore.MAGENTA}Processing Domains", unit="domain") as pbar:
+            with tqdm(total=len(domains), desc="Processing Domains", unit="domain") as pbar:
                 futures = [executor.submit(process_domain, domain) for domain in domains]
                 for future in futures:
                     future.add_done_callback(lambda p: pbar.update(1))
     else:
-        with tqdm(domains, desc=f"{Fore.MAGENTA}Processing Domains", unit="domain") as pbar:
+        with tqdm(domains, desc="Processing Domains", unit="domain") as pbar:
             for domain in pbar:
                 process_domain(domain)
 

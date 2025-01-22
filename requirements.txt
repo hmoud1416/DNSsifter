@@ -1,2 +1,3 @@
 geoip2
 argparse
+tqdm
