@@ -99,7 +99,6 @@ def check_dnssec(domain):
     return {"command": command, "output": output}
 
 # Save output to JSON file
-
 def save_output(tld, domain, output_data):
     date_part = datetime.now().strftime("%Y_%m_%d")
     output_dir = os.path.join("output", tld, date_part)
@@ -109,7 +108,7 @@ def save_output(tld, domain, output_data):
     # Clean the output by replacing tabs with commas
     def clean_output(data):
         if isinstance(data, str):
-            return data.replace("\\t", ", ")
+            return data.replace("\t", ", ")
         if isinstance(data, list):
             return [clean_output(item) for item in data]
         if isinstance(data, dict):
@@ -121,7 +120,6 @@ def save_output(tld, domain, output_data):
     with open(output_file, 'w') as file:
         json.dump(cleaned_data, file, indent=4)
     print(f"{Fore.GREEN}Saved output for {domain} to {output_file}")
-
 
 # Display progress animation
 def show_spinner(message, duration=3):
