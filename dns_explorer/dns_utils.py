@@ -68,9 +68,10 @@ def get_geoip_info(ip_list):
             if ipaddress.ip_address(ip):
                 city = geoip_city_reader.city(ip).city.name or "null"
                 country = geoip_country_reader.country(ip).country.name or "null"
-                results.append({"IP": ip, "City": city, "Country": country, "ANS": geoip_ans_reader})
+                ans = geoip_ans_reader.country(ip).country.name or "null"
+                results.append({"IP": ip, "City": city, "Country": country, "ANS": ans})
         except (geoip2.errors.AddressNotFoundError, ValueError):
-            results.append({"IP": ip, "City": "null", "Country": "null","ANS": "null"})
+            results.append({"IP": ip, "City": "null", "Country": "null", "ANS": "null"})
     geoip_city_reader.close()
     geoip_country_reader.close()
     return results
