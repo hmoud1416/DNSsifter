@@ -1,7 +1,7 @@
 
 ---
 
-![alt text](https://i.ibb.co/fYJ4FvVj/DNSsifter.png)
+![alt text](https://i.ibb.co/6cKJXNMp/DNSsifter.jpg)
 
 
 # DNSsifter
