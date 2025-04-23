@@ -115,8 +115,9 @@ Input (`input_arabic.txt`):
 
 Output (`output_ascii.txt`):
 ```
-xn--mhd-cna
-xn--ogb
+xn--mgbe5bybw
+xn--sgbe9dm
+xn--igbug1g
 ```
 
 ---
