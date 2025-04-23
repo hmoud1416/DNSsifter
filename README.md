@@ -11,13 +11,6 @@ DNSsifter is an automated multithreaded bruteforcer to discover seed domain name
 
 DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing and fuzzing. Designed with speed and simplicity in mind, it caters to penetration testers, ethical hackers, and cybersecurity professionals focused on active reconnaissance. It aids in uncovering hidden subdomains and detecting potential vulnerabilities within a target's DNS infrastructure.
 
-DNSsifter is a versatile suite of tools designed for DNS analysis, vulnerability scanning, and Arabic language processing utilities. This repository contains various scripts and modules that can help you:
-
-- **Scan DNS vulnerabilities** such as Zone Transfer (AXFR), DNS Cache Poisoning, Subdomain Takeover, and more.
-- **Convert Arabic wordlists** to ASCII/Punycode representations.
-- **Translate Arabic words** into English phonetic equivalents.
-- **Perform detailed DNS lookups** with GeoIP information and DNSSEC validation.
-
 ---
 
 ## Table of Contents
@@ -35,6 +28,19 @@ DNSsifter is a versatile suite of tools designed for DNS analysis, vulnerability
 ---
 
 ## Features
+
+### 1. DNS Enumeration:
+Actively discover hidden seed domains and subdomains through asynchronous brute-forcing techniques. 
+#### What we do here:
+At each level, DNSsifter requires three lists as input for each Top-Level-domain/Second-Level-Domain (TLD/SLD) for each enumeration level: 
+
+\begin{enumerate}
+    \item A list of all domain names registered with the target ccTLD\allowbreak /SLD acquired through passive DNS enumeration. This list contains either the set \(D_{seed}\) or the \(i^{th}\) level \(D_{sub}\) for each \(d \in D_{seed}\).
+    \item A list consisting of publicly accessible \(D_{seed}\) or \(D_{sub}\) registered with the target ccTLD/SLD.
+    \item A list obtained by performing active DNS enumeration where the wordlists are prepended to the target ccTLD\allowbreak /SLD\allowbreak. For example, considering (\texttt{.com.sa}) as our target SLD with a wordlist contains site1, site2, and site3, then the prepended potential are (\texttt{site1.com.sa}, \texttt{site2.com.sa}, and \texttt{site3.\allowbreak com.\allowbreak sa}), respectively. 
+\end{enumerate}
+
+Next, DNSsifter performs DNS resolution in hope to find acive and alive \(D_{seed}\) or \(D_{sub}\). To be more  certain, DNSsifter re-iterates the DNS resolution procedure on the gathered sets to eliminate false-positives. The crucial aspect lies in utilizing trusted DNS resolvers such as Google DNS (\texttt{8.8.8.8}, \texttt{8.8.4.4}), OpenDNS (\texttt{208.67.222.\allowbreak 222}, \texttt{208.67.220.220}) and Cloudflare (\texttt{1.1.1.1}) during this resolution process to validate the results for a final time. This double-resolution approach aids in discarding erroneous results. Leveraging trusted DNS resolvers offers a significant advantage by mitigating risks associated with DNS poisoning or other discrepancies commonly encountered with standard resolvers. The output is a list of Active seed domains and subdomains which is the input of the next enumeration level. The tool keeps digging deeply until it reaches the $n^{th}$ level (i.e., the last one), which outputs no active subdomain. 
 
 ### 1. Convert Arabic Wordlist to ASCII
 - Converts Arabic wordlists to their ASCII-compatible Punycode representation.
