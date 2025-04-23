@@ -1,7 +1,6 @@
 
----
+![Tool Screenshot](Figures/DNSsifter.jpg)
 
-![alt text](https://i.postimg.cc/yYp3Qn1q/DNSsifter.jpg)
 
 
 # DNSsifter
@@ -29,8 +28,23 @@ DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing a
 
 ## Features
 
-### 1. DNS Enumeration:
-Actively discover hidden seed domains and subdomains through asynchronous brute-forcing techniques. 
+
+### 1. Wordlist Generation:
+Creates customized wordlists in English, Arabic, and Arabizi.
+#### What we do here:
+DNSsifter utilizes curated wordlists—collections of commonly used domain-related terms—for generating potential seed domains and subdomains during active enumeration and reconnaissance. These wordlists include general vocabulary, industry-specific keywords, brand names, and popular phrases that are likely to appear in real-world domain names. They are essential for security researchers, penetration testers, and administrators in evaluating the exposure of DNS infrastructure.
+
+To make the domain identification process more comprehensive and inclusive of regional variations, we developed specialized scripts to create wordlists aligned with Arabic-speaking regions. Specifically, DNSsifter includes instrumented scripts to:
+
+1. **Translate** commonly used English words and technical terms into Arabic to reflect linguistic relevance in domain names.
+2. **Generate Arabizi wordlists**—transliterated Arabic written using Latin characters, often used informally online.
+3. **Create ASCII-compatible versions** of Arabic domain-related terms to support DNS environments that require ASCII-only inputs.
+
+These multilingual wordlists expand the effectiveness of DNS brute-forcing and enhance the discovery of culturally and linguistically relevant domain assets.
+
+
+### 2. DNS Enumeration:
+Actively discovers hidden seed domains and subdomains through asynchronous brute-forcing techniques. 
 #### What we do here:
 At each level, DNSsifter requires three input lists for each Top-Level Domain (TLD) or Second-Level Domain (SLD) for enumeration:
 
@@ -50,30 +64,56 @@ Next, DNSsifter performs DNS resolution in search of active seed domains or subd
 
 This double-resolution step helps eliminate invalid or poisoned records. The final output is a list of confirmed active domains and subdomains, which then serves as input for the next enumeration level. DNSsifter continues recursively until reaching a level with no active subdomains — marking the end of enumeration.
 
-### 1. Convert Arabic Wordlist to ASCII
-- Converts Arabic wordlists to their ASCII-compatible Punycode representation.
-- Useful for handling Arabic domain names in systems that only support ASCII.
 
-### 2. Convert Arabic Wordlist to English Phonetics
-- Translates Arabic words into multiple possible English phonetic representations.
-- Supports alternative patterns for each Arabic character.
+### 3. DNS Measurments:
+Performs DNS configuration and performance analysis for security insights.
 
-### 3. DNS Vulnerability Scanner
-- Scans domains for common DNS vulnerabilities, including:
-  - Open Zone Transfer (AXFR)
-  - DNS Cache Poisoning
-  - Subdomain Takeover (Wildcard DNS)
-  - CNAME Misconfigurations
-  - NXDOMAIN Flooding
-  - DNSSEC Misconfigurations
-  - Stale NS Records
+![Tool Screenshot](Figures/measurments.jpg)
 
-### 4. DNS Explorer (Measurements)
-- A comprehensive DNS analysis tool with the following features:
-  - Fetches NS, A, AAAA, and MX records.
-  - Performs GeoIP lookups using MaxMind databases.
-  - Validates DNSSEC configurations.
-  - Supports concurrent domain processing with progress tracking.
+#### What we do here:
+After identifying DNS seed domains and subdomains, DNSsifter conducts a series of DNS measurements to assess configuration quality, security posture, and infrastructure resilience. For each domain in the seed set, the tool performs the following steps:
+
+- **Step 1: Querying Name Servers**  
+  DNSsifter queries both the parent and child authoritative name servers to determine the authoritative NS set for each domain.
+
+- **Step 2: Collecting IP Addresses**  
+  The tool retrieves IPv4 (`A`) and IPv6 (`AAAA`) records for each nameserver. It detects round-robin configurations where one NS returns multiple IPs to balance traffic and enhance redundancy.
+
+- **Step 3: Testing Configuration**  
+  DNSsifter sends:
+  - `A` and `AAAA` queries to validate nameserver configuration and detect lame delegations.
+  - `MX` queries to retrieve mail exchanger records for the domain.
+
+- **Step 4: Verifying MX Server Configuration**  
+  The tool queries the `A` records of MX servers to verify their nameserver configurations and check for misconfigurations.
+
+- **Step 5: DNSSEC Testing**  
+  DNSsifter checks for DNSSEC deployment by retrieving `DS` and `DNSKEY` records. It then validates them using trusted resolvers like Google’s `8.8.8.8` to confirm the authenticity and integrity of the domain’s DNS data.
+
+- **Step 6: Robustness & Redundancy Evaluation**  
+  The tool evaluates DNS robustness using:
+  - MaxMind’s GeoIP2 ASN database to identify the number of unique /24 prefixes and ASNs associated with the nameserver IPs.
+  - iGreedy-based RTT measurements via 500 globally distributed RIPE Atlas probes to detect IP anycast adoption and validate infrastructure diversity.
+
+ 
+### 4. DNS Vulnerability Assessment:
+Scans for critical DNS security vulnerabilities and misconfigurations.
+
+#### What we do here:
+DNSsifter includes an automated script designed to perform a comprehensive evaluation of common DNS vulnerabilities. This feature helps identify both active and passive threats, as well as misconfigurations that may expose DNS infrastructure to exploitation or service disruption.
+
+The tool scans for five key DNS security issues, categorized by their activity type (active vs. passive) and their impact level. This allows users to understand the nature of each issue—whether it’s a direct security vulnerability or a configuration oversight—and prioritize mitigation accordingly.
+
+The following table summarizes the vulnerabilities DNSsifter checks for:
+
+| **Vulnerability**                  | **Activity Type** | **Security Impact**                        |
+|-----------------------------------|-------------------|--------------------------------------------|
+| AXFR Zone Transfer                | Active            | High (Serious misconfiguration)            |
+| DNS Cache Poisoning               | Passive           | High (Exploitable in weak DNS servers)     |
+| Subdomain Takeover (Wildcard DNS) | Passive           | High (If misconfigured)                    |
+| NXDOMAIN Flooding (DNS Amplification) | Active        | Moderate (Used in DDoS attacks)           |
+| Stale NS Record Detection         | Passive           | High (If NS records are hijackable)        |
+
 
 ---
 
