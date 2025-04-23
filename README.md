@@ -23,7 +23,6 @@ DNS Sifter is a versatile suite of tools designed for DNS analysis, vulnerabilit
   - [4. DNS Explorer (Measurements)](#4-dns-explorer-measurements)
 - [Directory Structure](#directory-structure)
 - [Contributing](#contributing)
-- [License](#license)
 
 ---
 
