@@ -3,6 +3,10 @@
 
 # DNSsifter
 
+DNSsifter is an automated multithreaded bruteforcer to discover seed domain names, subdomain names, and hostnames by systematically generating and querying a large number of possible combinations against targeted DNS servers. Since a d can have multiple levels of subdomains, DNSsifter enumerates deeply on all subdomain levels staring from the seed level until it reaches the last level subdomain. For instance, test3.test2.test1.example.com}) has three levels of subdomains. A subdomain may comprise up to 255 characters, counting the dots. However, if the subdomain contains multiple levels, each level can only consist of a maximum of 63 characters. 
+
+DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing and fuzzing. Designed with speed and simplicity in mind, it caters to penetration testers, ethical hackers, and cybersecurity professionals focused on active reconnaissance. It aids in uncovering hidden subdomains and detecting potential vulnerabilities within a target's DNS infrastructure.
+
 DNS Sifter is a versatile suite of tools designed for DNS analysis, vulnerability scanning, and Arabic language processing utilities. This repository contains various scripts and modules that can help you:
 
 - **Scan DNS vulnerabilities** such as Zone Transfer (AXFR), DNS Cache Poisoning, Subdomain Takeover, and more.
