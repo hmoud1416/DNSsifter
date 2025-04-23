@@ -1,443 +1,284 @@
-\---
 
-\# DNS Sifter - DNS Analysis and Arabic Word Conversion Tools
+---
+
+# DNS Sifter - DNS Analysis and Arabic Word Conversion Tools
 
 DNS Sifter is a versatile suite of tools designed for DNS analysis, vulnerability scanning, and Arabic language processing utilities. This repository contains various scripts and modules that can help you:
 
-\- \*\*Scan DNS vulnerabilities\*\* such as Zone Transfer (AXFR), DNS Cache Poisoning, Subdomain Takeover, and more.
-
-\- \*\*Convert Arabic wordlists\*\* to ASCII/Punycode representations.
-
-\- \*\*Translate Arabic words\*\* into English phonetic equivalents.
-
-\- \*\*Perform detailed DNS lookups\*\* with GeoIP information and DNSSEC validation.
-
-\---
-
-\## Table of Contents
-
-\- \[Features\](#features)
-
-\- \[Installation\](#installation)
-
-\- \[Usage\](#usage)
-
-\- \[1. Convert Arabic Wordlist to ASCII\](#1-convert-arabic-wordlist-to-ascii)
-
-\- \[2. Convert Arabic Wordlist to English Phonetics\](#2-convert-arabic-wordlist-to-english-phonetics)
-
-\- \[3. DNS Vulnerability Scanner\](#3-dns-vulnerability-scanner)
-
-\- \[4. DNS Explorer (Measurements)\](#4-dns-explorer-measurements)
-
-\- \[Directory Structure\](#directory-structure)
-
-\- \[Contributing\](#contributing)
-
-\- \[License\](#license)
-
-\---
-
-\## Features
-
-\### 1. Convert Arabic Wordlist to ASCII
-
-\- Converts Arabic wordlists to their ASCII-compatible Punycode representation.
-
-\- Useful for handling Arabic domain names in systems that only support ASCII.
-
-\### 2. Convert Arabic Wordlist to English Phonetics
-
-\- Translates Arabic words into multiple possible English phonetic representations.
-
-\- Supports alternative patterns for each Arabic character.
-
-\### 3. DNS Vulnerability Scanner
-
-\- Scans domains for common DNS vulnerabilities, including:
-
-\- Open Zone Transfer (AXFR)
-
-\- DNS Cache Poisoning
-
-\- Subdomain Takeover (Wildcard DNS)
-
-\- CNAME Misconfigurations
-
-\- NXDOMAIN Flooding
-
-\- DNSSEC Misconfigurations
-
-\- Stale NS Records
-
-\### 4. DNS Explorer (Measurements)
-
-\- A comprehensive DNS analysis tool with the following features:
-
-\- Fetches NS, A, AAAA, and MX records.
-
-\- Performs GeoIP lookups using MaxMind databases.
-
-\- Validates DNSSEC configurations.
-
-\- Supports concurrent domain processing with progress tracking.
-
-\---
-
-\## Installation
-
-\### Prerequisites
-
-\- Python 3.x
-
-\- Bash
-
-\- Required Python packages:
-
-\`\`\`bash
-
-pip install geoip2 argparse tqdm colorama
-
-\`\`\`
-
-\- MaxMind GeoIP databases (place in \`data/\` directory):
-
-\- GeoLite2-City.mmdb
-
-\- GeoLite2-Country.mmdb
-
-\- GeoLite2-ASN.mmdb
-
-\### Setup
-
-1\. Clone the repository:
-
-\`\`\`bash
-
-git clone https://github.com/yourusername/DNS-Sifter.git
-
-cd DNS-Sifter
-
-\`\`\`
-
-2\. Install dependencies:
-
-\`\`\`bash
-
-pip install -r requirements.txt
-
-\`\`\`
-
-3\. Make scripts executable:
-
-\`\`\`bash
-
-chmod +x Scripts/\*.sh
-
-\`\`\`
-
-\---
-
-\## Usage
-
-\### 1. Convert Arabic Wordlist to ASCII
+- **Scan DNS vulnerabilities** such as Zone Transfer (AXFR), DNS Cache Poisoning, Subdomain Takeover, and more.
+- **Convert Arabic wordlists** to ASCII/Punycode representations.
+- **Translate Arabic words** into English phonetic equivalents.
+- **Perform detailed DNS lookups** with GeoIP information and DNSSEC validation.
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [1. Convert Arabic Wordlist to ASCII](#1-convert-arabic-wordlist-to-ascii)
+  - [2. Convert Arabic Wordlist to English Phonetics](#2-convert-arabic-wordlist-to-english-phonetics)
+  - [3. DNS Vulnerability Scanner](#3-dns-vulnerability-scanner)
+  - [4. DNS Explorer (Measurements)](#4-dns-explorer-measurements)
+- [Directory Structure](#directory-structure)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Features
+
+### 1. Convert Arabic Wordlist to ASCII
+- Converts Arabic wordlists to their ASCII-compatible Punycode representation.
+- Useful for handling Arabic domain names in systems that only support ASCII.
+
+### 2. Convert Arabic Wordlist to English Phonetics
+- Translates Arabic words into multiple possible English phonetic representations.
+- Supports alternative patterns for each Arabic character.
+
+### 3. DNS Vulnerability Scanner
+- Scans domains for common DNS vulnerabilities, including:
+  - Open Zone Transfer (AXFR)
+  - DNS Cache Poisoning
+  - Subdomain Takeover (Wildcard DNS)
+  - CNAME Misconfigurations
+  - NXDOMAIN Flooding
+  - DNSSEC Misconfigurations
+  - Stale NS Records
+
+### 4. DNS Explorer (Measurements)
+- A comprehensive DNS analysis tool with the following features:
+  - Fetches NS, A, AAAA, and MX records.
+  - Performs GeoIP lookups using MaxMind databases.
+  - Validates DNSSEC configurations.
+  - Supports concurrent domain processing with progress tracking.
+
+---
+
+## Installation
+
+### Prerequisites
+
+- Python 3.x
+- Bash
+- Required Python packages:
+  ```bash
+  pip install geoip2 argparse tqdm colorama
+  ```
+- MaxMind GeoIP databases (place in `data/` directory):
+  - GeoLite2-City.mmdb
+  - GeoLite2-Country.mmdb
+  - GeoLite2-ASN.mmdb
+
+### Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/DNS-Sifter.git
+   cd DNS-Sifter
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Make scripts executable:
+   ```bash
+   chmod +x Scripts/*.sh
+   ```
+
+---
+
+## Usage
+
+### 1. Convert Arabic Wordlist to ASCII
 
 This script converts Arabic words to their ASCII-compatible Punycode representation.
 
-\#### Command:
+#### Command:
+```bash
+python3 Scripts/Convert_ArabicWordlist_To_Ascii.py -l input_arabic.txt -o output_ascii.txt
+```
 
-\`\`\`bash
+#### Arguments:
+- `-l/--list`: Path to the input file containing Arabic words (one per line).
+- `-o/--output`: Path to the output file to save the Punycode results.
 
-python3 Scripts/Convert\_ArabicWordlist\_To\_Ascii.py -l input\_arabic.txt -o output\_ascii.txt
+#### Example:
+Input (`input_arabic.txt`):
+```
+فاطمة
+حمود
+أحمد
+```
 
-\`\`\`
-
-\#### Arguments:
-
-\- \`-l/--list\`: Path to the input file containing Arabic words (one per line).
-
-\- \`-o/--output\`: Path to the output file to save the Punycode results.
-
-\#### Example:
-
-Input (\`input\_arabic.txt\`):
-
-\`\`\`
-
-محمود
-
-علي
-
-\`\`\`
-
-Output (\`output\_ascii.txt\`):
-
-\`\`\`
-
+Output (`output_ascii.txt`):
+```
 xn--mhd-cna
-
 xn--ogb
+```
 
-\`\`\`
+---
 
-\---
-
-\### 2. Convert Arabic Wordlist to English Phonetics
+### 2. Convert Arabic Wordlist to English Phonetics
 
 This script translates Arabic words into multiple possible English phonetic representations.
 
-\#### Command:
+#### Command:
+```bash
+python3 Scripts/Convert_ArabicWordlist_To_EnglishPhonetics.py -l input_arabic.txt -o output_phonetics.txt
+```
 
-\`\`\`bash
+#### Arguments:
+- `-l/--list`: Path to the input file containing Arabic words.
+- `-o/--output`: Path to the output file to save unique phonetic words.
 
-python3 Scripts/Convert\_ArabicWordlist\_To\_EnglishPhonetics.py -l input\_arabic.txt -o output\_phonetics.txt
+#### Example:
+Input (`input_arabic.txt`):
+```
+فاطمة
+حمود
+أحمد
+```
 
-\`\`\`
+Output (`output_phonetics.txt`):
+```
+Fatima
+Hamoud
+Ahmed
+```
 
-\#### Arguments:
+---
 
-\- \`-l/--list\`: Path to the input file containing Arabic words.
-
-\- \`-o/--output\`: Path to the output file to save unique phonetic words.
-
-\#### Example:
-
-Input (\`input\_arabic.txt\`):
-
-\`\`\`
-
-محمود
-
-علي
-
-\`\`\`
-
-Output (\`output\_phonetics.txt\`):
-
-\`\`\`
-
-mahmoud
-
-mahmod
-
-ali
-
-\`\`\`
-
-\---
-
-\### 3. DNS Vulnerability Scanner
+### 3. DNS Vulnerability Scanner
 
 This script scans domains for common DNS vulnerabilities.
 
-\#### Command:
+#### Command:
+```bash
+./Scripts/DNS_Vulnerability_Scanner.sh -d domains.txt -o results.json
+```
 
-\`\`\`bash
+#### Arguments:
+- `-d/--domains`: Path to the input file containing domains (one per line).
+- `-o/--output`: Path to the output file to save scan results.
 
-./Scripts/DNS\_Vulnerability\_Scanner.sh -d domains.txt -o results.json
-
-\`\`\`
-
-\#### Arguments:
-
-\- \`-d/--domains\`: Path to the input file containing domains (one per line).
-
-\- \`-o/--output\`: Path to the output file to save scan results.
-
-\#### Example:
-
-Input (\`domains.txt\`):
-
-\`\`\`
-
+#### Example:
+Input (`domains.txt`):
+```
 example.com
-
 google.com
+```
 
-\`\`\`
+Output (`results.json`):
+```json
+[
+    {
+        "domain": "example.com",
+        "vulnerabilities": [
+            {"vulnerability": "AXFR Open Zone Transfer", "server": "ns1.example.com"}
+        ]
+    }
+]
+```
 
-Output (\`results.json\`):
+---
 
-\`\`\`json
+### 4. DNS Explorer (Measurements)
 
-\[
+The `Measurements` folder contains a comprehensive DNS analysis tool.
 
-{
-
-"domain": "example.com",
-
-"vulnerabilities": \[
-
-{"vulnerability": "AXFR Open Zone Transfer", "server": "ns1.example.com"}
-
-\]
-
-}
-
-\]
-
-\`\`\`
-
-\---
-
-\### 4. DNS Explorer (Measurements)
-
-The \`Measurements\` folder contains a comprehensive DNS analysis tool.
-
-\#### Directory Structure:
-
-\`\`\`
-
+#### Directory Structure:
+```
 Measurements/
+├── dns_explorer/
+│   ├── __init__.py                     # Package initialization
+│   ├── dns_utils.py                    # Main DNS utility functions
+│   ├── geoip_utils.py                  # GeoIP lookup utilities
+│   ├── main.py                         # Entry point for DNS Explorer
+│   ├── output_utils.py                 # Output handling utilities
+│   └── tests/                          # Unit tests
+├── setup.py                            # Setup script for installation
+```
 
-├── dns\_explorer/
+##### **dns_utils.py**
+- Contains core functions for DNS analysis:
+  - Fetches NS, A, AAAA, and MX records.
+  - Performs GeoIP lookups using MaxMind databases.
+  - Validates DNSSEC configurations.
+  - Supports concurrent domain processing with progress tracking.
 
-│ ├── \_\_init\_\_.py # Package initialization
+##### **geoip_utils.py**
+- Provides utilities for GeoIP lookups:
+  - Uses MaxMind GeoLite2 databases for city, country, and ASN lookups.
+  - Handles invalid IP addresses gracefully.
 
-│ ├── dns\_utils.py # Main DNS utility functions
+##### **main.py**
+- Entry point for the DNS Explorer tool:
+  - Accepts a list of domains as input.
+  - Processes domains concurrently if threading is enabled.
 
-│ ├── geoip\_utils.py # GeoIP lookup utilities
+##### **setup.py**
+- Installation script for the DNS Explorer tool:
+  - Installs required dependencies (`geoip2`, `argparse`).
+  - Creates a command-line tool alias (`dnsexplorer`).
 
-│ ├── main.py # Entry point for DNS Explorer
+##### **tests/**
+- Contains unit tests for DNS and GeoIP utilities.
 
-│ ├── output\_utils.py # Output handling utilities
-
-│ └── tests/ # Unit tests
-
-├── setup.py # Setup script for installation
-
-\`\`\`
-
-\##### \*\*dns\_utils.py\*\*
-
-\- Contains core functions for DNS analysis:
-
-\- Fetches NS, A, AAAA, and MX records.
-
-\- Performs GeoIP lookups using MaxMind databases.
-
-\- Validates DNSSEC configurations.
-
-\- Supports concurrent domain processing with progress tracking.
-
-\##### \*\*geoip\_utils.py\*\*
-
-\- Provides utilities for GeoIP lookups:
-
-\- Uses MaxMind GeoLite2 databases for city, country, and ASN lookups.
-
-\- Handles invalid IP addresses gracefully.
-
-\##### \*\*main.py\*\*
-
-\- Entry point for the DNS Explorer tool:
-
-\- Accepts a list of domains as input.
-
-\- Processes domains concurrently if threading is enabled.
-
-\##### \*\*setup.py\*\*
-
-\- Installation script for the DNS Explorer tool:
-
-\- Installs required dependencies (\`geoip2\`, \`argparse\`).
-
-\- Creates a command-line tool alias (\`dnsexplorer\`).
-
-\##### \*\*tests/\*\*
-
-\- Contains unit tests for DNS and GeoIP utilities.
-
-\#### Installation:
-
+#### Installation:
 To install the DNS Explorer tool:
-
-\`\`\`bash
-
+```bash
 cd Scripts/Measurements
-
 pip install .
+```
 
-\`\`\`
-
-\#### Usage:
-
-\`\`\`bash
-
+#### Usage:
+```bash
 dnsexplorer --domains example.com google.com --threads
+```
 
-\`\`\`
+#### Features:
+- Fetches NS, A, AAAA, and MX records.
+- Performs GeoIP lookups.
+- Validates DNSSEC configurations.
+- Saves results in JSON format.
 
-\#### Features:
+---
 
-\- Fetches NS, A, AAAA, and MX records.
+## Directory Structure
 
-\- Performs GeoIP lookups.
-
-\- Validates DNSSEC configurations.
-
-\- Saves results in JSON format.
-
-\---
-
-\## Directory Structure
-
-\`\`\`
-
+```
 DNS-Sifter/
-
 ├── Scripts/
+│   ├── Convert_ArabicWordlist_To_Ascii.py       # Converts Arabic to ASCII
+│   ├── Convert_ArabicWordlist_To_EnglishPhonetics.py  # Converts Arabic to phonetics
+│   ├── DNS_Vulnerability_Scanner.sh            # Scans DNS vulnerabilities
+│   └── Measurements/                           # DNS analysis module
+│       ├── dns_explorer/                       # DNS analysis utilities
+│       │   ├── __init__.py
+│       │   ├── dns_utils.py                    # Main DNS utility functions
+│       │   ├── geoip_utils.py                  # GeoIP lookup utilities
+│       │   ├── main.py                         # Entry point for DNS Explorer
+│       │   ├── output_utils.py                 # Output handling utilities
+│       │   └── tests/                          # Unit tests
+│       └── setup.py                            # Setup script
+└── README.md                                   # This file
+```
 
-│ ├── Convert\_ArabicWordlist\_To\_Ascii.py # Converts Arabic to ASCII
+---
 
-│ ├── Convert\_ArabicWordlist\_To\_EnglishPhonetics.py # Converts Arabic to phonetics
-
-│ ├── DNS\_Vulnerability\_Scanner.sh # Scans DNS vulnerabilities
-
-│ └── Measurements/ # DNS analysis module
-
-│ ├── dns\_explorer/ # DNS analysis utilities
-
-│ │ ├── \_\_init\_\_.py
-
-│ │ ├── dns\_utils.py # Main DNS utility functions
-
-│ │ ├── geoip\_utils.py # GeoIP lookup utilities
-
-│ │ ├── main.py # Entry point for DNS Explorer
-
-│ │ ├── output\_utils.py # Output handling utilities
-
-│ │ └── tests/ # Unit tests
-
-│ └── setup.py # Setup script
-
-└── README.md # This file
-
-\`\`\`
-
-\---
-
-\## Contributing
+## Contributing
 
 We welcome contributions! To contribute:
 
-1\. Fork this repository.
+1. Fork this repository.
+2. Create a new branch (`git checkout -b feature/YourFeatureName`).
+3. Commit your changes (`git commit -m "Add some feature"`).
+4. Push to the branch (`git push origin feature/YourFeatureName`).
+5. Open a pull request.
 
-2\. Create a new branch (\`git checkout -b feature/YourFeatureName\`).
-
-3\. Commit your changes (\`git commit -m "Add some feature"\`).
-
-4\. Push to the branch (\`git push origin feature/YourFeatureName\`).
-
-5\. Open a pull request.
-
-\---
-
-\## License
-
-This project is licensed under the MIT License. See the \[LICENSE\](LICENSE) file for details.
-
-\---
 
 
