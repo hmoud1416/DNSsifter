@@ -1,190 +1,443 @@
+\---
 
-# DNSsifter
+\# DNS Sifter - DNS Analysis and Arabic Word Conversion Tools
 
-**DNSsifter** is an automated multithreaded bruteforcer to discover seed DNS domain names, subdomain names, and hostnames by systematically generating and querying a large number of possible combinations against targeted DNS servers. Since a domain can have multiple levels of subdomains, DNSsifter enumerates deeply on all subdomain levels staring from the seed level until it reaches the last level subdomain. For instance, (test3.test2.test1.example.com) has three levels of subdomains. A subdomain may comprise up to 255 characters, counting the dots. However, if the subdomain contains multiple levels, each level can only consist of a maximum of 63 characters.
+DNS Sifter is a versatile suite of tools designed for DNS analysis, vulnerability scanning, and Arabic language processing utilities. This repository contains various scripts and modules that can help you:
 
-## Features
+\- \*\*Scan DNS vulnerabilities\*\* such as Zone Transfer (AXFR), DNS Cache Poisoning, Subdomain Takeover, and more.
 
-- Fetch **NS**, **A**, and **AAAA** records for domains.
-- Perform **GeoIP lookups** for IP addresses (City and Country).
-- Check **DNSSEC** using `delv`.
-- Save results in a structured JSON format.
-- Supports **concurrent processing** with multithreading for faster results.
+\- \*\*Convert Arabic wordlists\*\* to ASCII/Punycode representations.
 
----
+\- \*\*Translate Arabic words\*\* into English phonetic equivalents.
 
-## Project Structure
+\- \*\*Perform detailed DNS lookups\*\* with GeoIP information and DNSSEC validation.
 
-```
-DNSsifter/
-├── dns_explorer/
-│   ├── __init__.py               # Defines the package
-│   ├── main.py                   # Entry point for the project
-│   ├── dns_utils.py              # Functions related to DNS queries
-│   ├── geoip_utils.py            # Functions related to GeoIP lookups
-│   ├── output_utils.py           # Functions for saving and logging output
-├── data/
-│   ├── GeoLite2-City.mmdb        # GeoIP database for city lookups
-│   ├── GeoLite2-Country.mmdb     # GeoIP database for country lookups
-├── tests/
-│   ├── test_dns_utils.py         # Unit tests for DNS functions
-│   ├── test_geoip_utils.py       # Unit tests for GeoIP functions
-├── examples/
-│   ├── example_domains.txt       # Example list of domains for testing
-│   ├── example_output.json       # Example output file
-├── docs/
-│   ├── README.md                 # Documentation for the project
-│   ├── USAGE.md                  # Detailed usage instructions
-│   ├── CONTRIBUTING.md           # Guidelines for contributors
-├── requirements.txt              # Dependencies required for the project
-├── setup.py                      # Installation setup for the project
-├── LICENSE                       # Project license (e.g., MIT)
-└── .gitignore                    # Excludes unnecessary files from Git
-```
+\---
 
----
+\## Table of Contents
 
-## Installation
+\- \[Features\](#features)
 
-### Prerequisites
+\- \[Installation\](#installation)
 
-1. Python 3.7 or newer installed on your system.
-2. `pip` for installing Python packages.
+\- \[Usage\](#usage)
 
-### Steps
+\- \[1. Convert Arabic Wordlist to ASCII\](#1-convert-arabic-wordlist-to-ascii)
 
-1. **Clone the Repository:**
+\- \[2. Convert Arabic Wordlist to English Phonetics\](#2-convert-arabic-wordlist-to-english-phonetics)
 
-   ```bash
-   git clone https://github.com/your-username/DNSsifter.git
-   cd DNSsifter
-   ```
+\- \[3. DNS Vulnerability Scanner\](#3-dns-vulnerability-scanner)
 
-2. **Create a Virtual Environment:**
+\- \[4. DNS Explorer (Measurements)\](#4-dns-explorer-measurements)
 
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate        # On Linux/Mac
-   .venv\Scripts\activate         # On Windows
-   ```
+\- \[Directory Structure\](#directory-structure)
 
-3. **Install Dependencies:**
+\- \[Contributing\](#contributing)
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+\- \[License\](#license)
 
-4. **Add GeoIP Database Files:**
-   Download the following GeoIP database files from [MaxMind](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data):
-   - `GeoLite2-City.mmdb`
-   - `GeoLite2-Country.mmdb`
+\---
 
-   Place them in the `data/` directory.
+\## Features
 
----
+\### 1. Convert Arabic Wordlist to ASCII
 
-## Usage
+\- Converts Arabic wordlists to their ASCII-compatible Punycode representation.
 
-1. **Process a Single Domain:**
+\- Useful for handling Arabic domain names in systems that only support ASCII.
 
-   ```bash
-   python -m dns_explorer.main --domains example.com
-   ```
+\### 2. Convert Arabic Wordlist to English Phonetics
 
-2. **Process Multiple Domains:**
+\- Translates Arabic words into multiple possible English phonetic representations.
 
-   ```bash
-   python -m dns_explorer.main --domains example.com example.net another.org
-   ```
+\- Supports alternative patterns for each Arabic character.
 
-3. **Enable Concurrent Processing:**
+\### 3. DNS Vulnerability Scanner
 
-   Use the `--threads` flag for faster processing:
+\- Scans domains for common DNS vulnerabilities, including:
 
-   ```bash
-   python -m dns_explorer.main --domains example.com example.net --threads
-   ```
+\- Open Zone Transfer (AXFR)
 
----
+\- DNS Cache Poisoning
 
-## Output
+\- Subdomain Takeover (Wildcard DNS)
 
-Results are saved in the `output/` directory under subfolders organized by TLD and date. For example:
+\- CNAME Misconfigurations
 
-```
-output/
-├── com/
-│   ├── 2025_01_21/
-│       ├── example.com.json
-├── net/
-│   ├── 2025_01_21/
-│       ├── example.net.json
-```
+\- NXDOMAIN Flooding
 
-Each JSON file contains details like:
+\- DNSSEC Misconfigurations
 
-```json
+\- Stale NS Records
+
+\### 4. DNS Explorer (Measurements)
+
+\- A comprehensive DNS analysis tool with the following features:
+
+\- Fetches NS, A, AAAA, and MX records.
+
+\- Performs GeoIP lookups using MaxMind databases.
+
+\- Validates DNSSEC configurations.
+
+\- Supports concurrent domain processing with progress tracking.
+
+\---
+
+\## Installation
+
+\### Prerequisites
+
+\- Python 3.x
+
+\- Bash
+
+\- Required Python packages:
+
+\`\`\`bash
+
+pip install geoip2 argparse tqdm colorama
+
+\`\`\`
+
+\- MaxMind GeoIP databases (place in \`data/\` directory):
+
+\- GeoLite2-City.mmdb
+
+\- GeoLite2-Country.mmdb
+
+\- GeoLite2-ASN.mmdb
+
+\### Setup
+
+1\. Clone the repository:
+
+\`\`\`bash
+
+git clone https://github.com/yourusername/DNS-Sifter.git
+
+cd DNS-Sifter
+
+\`\`\`
+
+2\. Install dependencies:
+
+\`\`\`bash
+
+pip install -r requirements.txt
+
+\`\`\`
+
+3\. Make scripts executable:
+
+\`\`\`bash
+
+chmod +x Scripts/\*.sh
+
+\`\`\`
+
+\---
+
+\## Usage
+
+\### 1. Convert Arabic Wordlist to ASCII
+
+This script converts Arabic words to their ASCII-compatible Punycode representation.
+
+\#### Command:
+
+\`\`\`bash
+
+python3 Scripts/Convert\_ArabicWordlist\_To\_Ascii.py -l input\_arabic.txt -o output\_ascii.txt
+
+\`\`\`
+
+\#### Arguments:
+
+\- \`-l/--list\`: Path to the input file containing Arabic words (one per line).
+
+\- \`-o/--output\`: Path to the output file to save the Punycode results.
+
+\#### Example:
+
+Input (\`input\_arabic.txt\`):
+
+\`\`\`
+
+محمود
+
+علي
+
+\`\`\`
+
+Output (\`output\_ascii.txt\`):
+
+\`\`\`
+
+xn--mhd-cna
+
+xn--ogb
+
+\`\`\`
+
+\---
+
+\### 2. Convert Arabic Wordlist to English Phonetics
+
+This script translates Arabic words into multiple possible English phonetic representations.
+
+\#### Command:
+
+\`\`\`bash
+
+python3 Scripts/Convert\_ArabicWordlist\_To\_EnglishPhonetics.py -l input\_arabic.txt -o output\_phonetics.txt
+
+\`\`\`
+
+\#### Arguments:
+
+\- \`-l/--list\`: Path to the input file containing Arabic words.
+
+\- \`-o/--output\`: Path to the output file to save unique phonetic words.
+
+\#### Example:
+
+Input (\`input\_arabic.txt\`):
+
+\`\`\`
+
+محمود
+
+علي
+
+\`\`\`
+
+Output (\`output\_phonetics.txt\`):
+
+\`\`\`
+
+mahmoud
+
+mahmod
+
+ali
+
+\`\`\`
+
+\---
+
+\### 3. DNS Vulnerability Scanner
+
+This script scans domains for common DNS vulnerabilities.
+
+\#### Command:
+
+\`\`\`bash
+
+./Scripts/DNS\_Vulnerability\_Scanner.sh -d domains.txt -o results.json
+
+\`\`\`
+
+\#### Arguments:
+
+\- \`-d/--domains\`: Path to the input file containing domains (one per line).
+
+\- \`-o/--output\`: Path to the output file to save scan results.
+
+\#### Example:
+
+Input (\`domains.txt\`):
+
+\`\`\`
+
+example.com
+
+google.com
+
+\`\`\`
+
+Output (\`results.json\`):
+
+\`\`\`json
+
+\[
+
 {
-    "domain": "example.com",
-    "tld": "com",
-    "ns_records": ["ns1.example.com", "ns2.example.com"],
-    "ns_details": [
-        {
-            "NS_Server": "ns1.example.com",
-            "authority": [...],
-            "answer": [...]
-        }
-    ],
-    "ip_records": [
-        {
-            "NS": "ns1.example.com",
-            "A_record": ["192.168.1.1"],
-            "AAAA_record": ["2001:0db8:85a3::8a2e:0370:7334"]
-        }
-    ],
-    "geoip_info": [
-        {
-            "IP": "192.168.1.1",
-            "City": "San Francisco",
-            "Country": "United States"
-        }
-    ],
-    "mx_records": [...],
-    "dnssec_info": {...}
+
+"domain": "example.com",
+
+"vulnerabilities": \[
+
+{"vulnerability": "AXFR Open Zone Transfer", "server": "ns1.example.com"}
+
+\]
+
 }
-```
 
----
+\]
 
-## Running Tests
+\`\`\`
 
-To ensure everything is working correctly, run the tests:
+\---
 
-```bash
-pytest tests/
-```
+\### 4. DNS Explorer (Measurements)
 
----
+The \`Measurements\` folder contains a comprehensive DNS analysis tool.
 
-## Contributing
+\#### Directory Structure:
 
-Contributions are welcome! Please follow these steps:
+\`\`\`
 
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add feature name"
-   ```
-4. Push to your branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. Open a Pull Request.
+Measurements/
 
----
+├── dns\_explorer/
+
+│ ├── \_\_init\_\_.py # Package initialization
+
+│ ├── dns\_utils.py # Main DNS utility functions
+
+│ ├── geoip\_utils.py # GeoIP lookup utilities
+
+│ ├── main.py # Entry point for DNS Explorer
+
+│ ├── output\_utils.py # Output handling utilities
+
+│ └── tests/ # Unit tests
+
+├── setup.py # Setup script for installation
+
+\`\`\`
+
+\##### \*\*dns\_utils.py\*\*
+
+\- Contains core functions for DNS analysis:
+
+\- Fetches NS, A, AAAA, and MX records.
+
+\- Performs GeoIP lookups using MaxMind databases.
+
+\- Validates DNSSEC configurations.
+
+\- Supports concurrent domain processing with progress tracking.
+
+\##### \*\*geoip\_utils.py\*\*
+
+\- Provides utilities for GeoIP lookups:
+
+\- Uses MaxMind GeoLite2 databases for city, country, and ASN lookups.
+
+\- Handles invalid IP addresses gracefully.
+
+\##### \*\*main.py\*\*
+
+\- Entry point for the DNS Explorer tool:
+
+\- Accepts a list of domains as input.
+
+\- Processes domains concurrently if threading is enabled.
+
+\##### \*\*setup.py\*\*
+
+\- Installation script for the DNS Explorer tool:
+
+\- Installs required dependencies (\`geoip2\`, \`argparse\`).
+
+\- Creates a command-line tool alias (\`dnsexplorer\`).
+
+\##### \*\*tests/\*\*
+
+\- Contains unit tests for DNS and GeoIP utilities.
+
+\#### Installation:
+
+To install the DNS Explorer tool:
+
+\`\`\`bash
+
+cd Scripts/Measurements
+
+pip install .
+
+\`\`\`
+
+\#### Usage:
+
+\`\`\`bash
+
+dnsexplorer --domains example.com google.com --threads
+
+\`\`\`
+
+\#### Features:
+
+\- Fetches NS, A, AAAA, and MX records.
+
+\- Performs GeoIP lookups.
+
+\- Validates DNSSEC configurations.
+
+\- Saves results in JSON format.
+
+\---
+
+\## Directory Structure
+
+\`\`\`
+
+DNS-Sifter/
+
+├── Scripts/
+
+│ ├── Convert\_ArabicWordlist\_To\_Ascii.py # Converts Arabic to ASCII
+
+│ ├── Convert\_ArabicWordlist\_To\_EnglishPhonetics.py # Converts Arabic to phonetics
+
+│ ├── DNS\_Vulnerability\_Scanner.sh # Scans DNS vulnerabilities
+
+│ └── Measurements/ # DNS analysis module
+
+│ ├── dns\_explorer/ # DNS analysis utilities
+
+│ │ ├── \_\_init\_\_.py
+
+│ │ ├── dns\_utils.py # Main DNS utility functions
+
+│ │ ├── geoip\_utils.py # GeoIP lookup utilities
+
+│ │ ├── main.py # Entry point for DNS Explorer
+
+│ │ ├── output\_utils.py # Output handling utilities
+
+│ │ └── tests/ # Unit tests
+
+│ └── setup.py # Setup script
+
+└── README.md # This file
+
+\`\`\`
+
+\---
+
+\## Contributing
+
+We welcome contributions! To contribute:
+
+1\. Fork this repository.
+
+2\. Create a new branch (\`git checkout -b feature/YourFeatureName\`).
+
+3\. Commit your changes (\`git commit -m "Add some feature"\`).
+
+4\. Push to the branch (\`git push origin feature/YourFeatureName\`).
+
+5\. Open a pull request.
+
+\---
+
+\## License
+
+This project is licensed under the MIT License. See the \[LICENSE\](LICENSE) file for details.
+
+\---
 
 
