@@ -6,7 +6,7 @@
 
 # DNSsifter
 
-DNSsifter is an automated multithreaded bruteforcer to discover seed domain names, subdomain names, and hostnames by systematically generating and querying a large number of possible combinations against targeted DNS servers. Since a d can have multiple levels of subdomains, DNSsifter enumerates deeply on all subdomain levels staring from the seed level until it reaches the last level subdomain. For instance, test3.test2.test1.example.com has three levels of subdomains. A subdomain may comprise up to 255 characters, counting the dots. However, if the subdomain contains multiple levels, each level can only consist of a maximum of 63 characters. 
+DNSsifter is an automated multithreaded bruteforcer to discover seed domain names, subdomain names, and hostnames by systematically generating and querying a large number of possible combinations against targeted DNS servers. Since a d can have multiple levels of subdomains, DNSsifter enumerates deeply on all subdomain levels staring from the seed level until it reaches the last level subdomain. For instance, `test3.test2.test1.example.com` has three levels of subdomains. A subdomain may comprise up to 255 characters, counting the dots. However, if the subdomain contains multiple levels, each level can only consist of a maximum of 63 characters. 
 
 
 DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing and fuzzing. Designed with speed and simplicity in mind, it caters to penetration testers, ethical hackers, and cybersecurity professionals focused on active reconnaissance. It aids in uncovering hidden subdomains and detecting potential vulnerabilities within a target's DNS infrastructure.
@@ -32,15 +32,23 @@ DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing a
 ### 1. DNS Enumeration:
 Actively discover hidden seed domains and subdomains through asynchronous brute-forcing techniques. 
 #### What we do here:
-At each level, DNSsifter requires three lists as input for each Top-Level-domain/Second-Level-Domain (TLD/SLD) for each enumeration level: 
+At each level, DNSsifter requires three input lists for each Top-Level Domain (TLD) or Second-Level Domain (SLD) for enumeration:
 
-\begin{enumerate}
-    \item A list of all domain names registered with the target ccTLD\allowbreak /SLD acquired through passive DNS enumeration. This list contains either the set \(D_{seed}\) or the \(i^{th}\) level \(D_{sub}\) for each \(d \in D_{seed}\).
-    \item A list consisting of publicly accessible \(D_{seed}\) or \(D_{sub}\) registered with the target ccTLD/SLD.
-    \item A list obtained by performing active DNS enumeration where the wordlists are prepended to the target ccTLD\allowbreak /SLD\allowbreak. For example, considering (\texttt{.com.sa}) as our target SLD with a wordlist contains site1, site2, and site3, then the prepended potential are (\texttt{site1.com.sa}, \texttt{site2.com.sa}, and \texttt{site3.\allowbreak com.\allowbreak sa}), respectively. 
-\end{enumerate}
+1. A list of all domain names registered with the target TLD/SLD, acquired through passive DNS enumeration. This list contains either the set of seed domains or the i-th level subdomains for each seed domain.
+2. A list consisting of publicly accessible seed domains or subdomains registered with the target TLD/SLD.
+3. A list obtained by performing active DNS enumeration where the wordlists are prepended to the target TLD/SLD.  
+   - For example, if the target SLD is `.com.sa` and the wordlist contains `site1`, `site2`, and `site3`, DNSsifter generates:  
+     - `site1.com.sa`  
+     - `site2.com.sa`  
+     - `site3.com.sa`
 
-Next, DNSsifter performs DNS resolution in hope to find acive and alive \(D_{seed}\) or \(D_{sub}\). To be more  certain, DNSsifter re-iterates the DNS resolution procedure on the gathered sets to eliminate false-positives. The crucial aspect lies in utilizing trusted DNS resolvers such as Google DNS (\texttt{8.8.8.8}, \texttt{8.8.4.4}), OpenDNS (\texttt{208.67.222.\allowbreak 222}, \texttt{208.67.220.220}) and Cloudflare (\texttt{1.1.1.1}) during this resolution process to validate the results for a final time. This double-resolution approach aids in discarding erroneous results. Leveraging trusted DNS resolvers offers a significant advantage by mitigating risks associated with DNS poisoning or other discrepancies commonly encountered with standard resolvers. The output is a list of Active seed domains and subdomains which is the input of the next enumeration level. The tool keeps digging deeply until it reaches the $n^{th}$ level (i.e., the last one), which outputs no active subdomain. 
+Next, DNSsifter performs DNS resolution in search of active seed domains or subdomains. To reduce false positives, DNSsifter re-runs the resolution process on the collected results using trusted resolvers like:
+
+- Google DNS: `8.8.8.8`, `8.8.4.4`  
+- OpenDNS: `208.67.222.222`, `208.67.220.220`  
+- Cloudflare DNS: `1.1.1.1`
+
+This double-resolution step helps eliminate invalid or poisoned records. The final output is a list of confirmed active domains and subdomains, which then serves as input for the next enumeration level. DNSsifter continues recursively until reaching a level with no active subdomains — marking the end of enumeration.
 
 ### 1. Convert Arabic Wordlist to ASCII
 - Converts Arabic wordlists to their ASCII-compatible Punycode representation.
