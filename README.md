@@ -17,10 +17,12 @@ DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing a
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [1. Convert Arabic Wordlist to ASCII](#1-convert-arabic-wordlist-to-ascii)
-  - [2. Convert Arabic Wordlist to English Phonetics](#2-convert-arabic-wordlist-to-english-phonetics)
-  - [3. DNS Vulnerability Scanner](#3-dns-vulnerability-scanner)
-  - [4. DNS Explorer (Measurements)](#4-dns-explorer-measurements)
+  - [1. Convert English Wordlist to Arabic](#1-convert-english-wordlist-to-arabic)
+  - [2. Convert Arabic Wordlist to ASCII](#2-convert-arabic-wordlist-to-ascii)
+  - [3. Convert Arabic Wordlist to English Phonetics](#3-convert-arabic-wordlist-to-english-phonetics)
+  - [4. DNS Vulnerability Scanner](#4-dns-vulnerability-scanner)
+  - [5. DNS Enumeration](#5-dns-enumration)
+  - [6. DNS Explorer (Measurements)](#6-dns-explorer-measurements)
 - [Directory Structure](#directory-structure)
 - [Contributing](#contributing)
 
@@ -154,7 +156,16 @@ The following table summarizes the vulnerabilities DNSsifter checks for:
 
 ## Usage
 
-### 1. Convert Arabic Wordlist to ASCII
+### 1. Convert English Wordlist to Arabic
+
+This script converts Arabic words to their ASCII-compatible Punycode representation.
+
+#### Command:
+```bash
+python3 Scripts/translate_word_to_arabic.py [-h] -l WORDLIST -o OUTPUT [-k APIKEY]
+```
+
+### 2. Convert Arabic Wordlist to ASCII
 
 This script converts Arabic words to their ASCII-compatible Punycode representation.
 
@@ -184,7 +195,7 @@ xn--igbug1g
 
 ---
 
-### 2. Convert Arabic Wordlist to English Phonetics
+### 3. Convert Arabic Wordlist to English Phonetics
 
 This script translates Arabic words into multiple possible English phonetic representations.
 
@@ -214,7 +225,7 @@ Ahmed
 
 ---
 
-### 3. DNS Vulnerability Scanner
+### 4. DNS Vulnerability Scanner
 
 This script scans domains for common DNS vulnerabilities.
 
@@ -248,7 +259,17 @@ Output (`results.json`):
 
 ---
 
-### 4. DNS Explorer (Measurements)
+### 5. DNS Enumeration
+
+This script converts Arabic words to their ASCII-compatible Punycode representation.
+
+#### Command:
+```bash
+python3 Scripts/DNSsifter-emumerate.py -d DOMAIN -w WORDLIST [-o OUTPUT]
+```
+
+
+### 6. DNS Explorer (Measurements)
 
 The `Measurements` folder contains a comprehensive DNS analysis tool.
 
@@ -309,6 +330,8 @@ dnsexplorer --domains example.com google.com --threads
 - Saves results in JSON format.
 
 ---
+
+
 
 ## Directory Structure
 
