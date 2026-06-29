@@ -14,6 +14,8 @@ DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing a
 
 ## Table of Contents
 
+- [How DNSsifter Works](#how-dnssifter-works)
+- [How DNSsifter Compares](#how-dnssifter-compares)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -30,6 +32,66 @@ DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing a
 - [Directory Structure](#directory-structure)
 - [Citation](#citation)
 - [Contributing](#contributing)
+
+---
+
+## How DNSsifter Works
+
+Mature subdomain tools such as **Subfinder**, **Amass**, and **Sublist3r** are
+*passive aggregators*: they query a large set of third-party databases (Certificate
+Transparency logs, passive DNS, scanners) and return the union of the results. They
+do **not** perform active discovery, recursion, or liveness validation — by design
+you are expected to pipe their raw output into a separate resolver. As a result, a
+large fraction of what they report no longer resolves.
+
+DNSsifter is a **full enumeration engine**. It matches those tools on passive
+breadth and then adds three stages they do not have — active brute-force with
+multilingual wordlists, recursive multi-level enumeration, and trusted-resolver
+validation — so every reported host is verified live.
+
+![DNSsifter architecture vs passive aggregators](Figures/architecture_comparison.svg)
+
+### Passive source aggregation
+
+The passive stage ([`Scripts/passive_sources.py`](Scripts/passive_sources.py))
+queries many free, no-key sources concurrently and merges them: **crt.sh**
+(with retry + `exclude=expired` fallback for very large domains), **Certspotter**
+(paginated), **HackerTarget**, **RapidDNS**, **URLScan**, **Wayback/CommonCrawl**,
+and others. High-quality keyed sources (e.g. **VirusTotal**) are optional and are
+read from environment variables only — **never stored in the repository**:
+
+```bash
+export VT_API_KEY=...           # optional, lifts recall on large domains
+export CERTSPOTTER_API_KEY=...  # optional, removes the anonymous result cap
+```
+
+![Multi-source passive aggregation](Figures/passive_sources.svg)
+
+### Why this matters
+
+The discovered candidates from *every* stage are re-resolved through a set of
+trusted recursive resolvers (Google, Cloudflare, OpenDNS) that must agree before a
+host is kept. This yields a result set that is a **superset of any single passive
+tool** while remaining **100% live** — no manual resolving or noise filtering
+needed afterwards.
+
+---
+
+## How DNSsifter Compares
+
+On a stratified, DNS-validated benchmark, the upgraded passive aggregation plus
+DNSsifter's active and recursive stages raise recall by **~16×** over the original
+single-source version, reaching near-parity with the strongest passive tool while
+keeping **perfect precision** — where passive tools leave roughly three-quarters of
+their output unresolved. DNSsifter also surfaces hundreds of **unique live hosts**
+that no passive tool finds, because they exist only via active enumeration, not in
+any certificate or passive-DNS database.
+
+![Benchmark summary](Figures/benchmark_summary.svg)
+
+> The numbers above are aggregate, method-level metrics. To reproduce them on your
+> own targets, see [Benchmarking vs Other Tools](#8-benchmarking-vs-other-tools).
+> No target domains or discovered host data are published in this repository.
 
 ---
 
@@ -269,11 +331,12 @@ Output (`results.json`):
 ### 5. DNS Enumeration
 
 Multithreaded, recursive DNS enumeration with wildcard control and trusted-resolver
-confirmation. It combines passive discovery (Certificate Transparency logs) with
-active brute-forcing of a wordlist, enumerating level-by-level until no new active
-names are found. All measurement parameters (rate limit, wildcard cap, resolvers,
-recursion depth) are exposed as flags so the exact configuration used in the paper
-is reproducible — see [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
+confirmation. It combines **multi-source passive discovery**
+([`Scripts/passive_sources.py`](Scripts/passive_sources.py)) with active
+brute-forcing of a wordlist, enumerating level-by-level until no new active names are
+found, and validates every candidate through the trusted resolver set. See
+[How DNSsifter Works](#how-dnssifter-works) for the architecture and
+[REPRODUCIBILITY.md](REPRODUCIBILITY.md) for the exact measurement configuration.
 
 #### Command:
 ```bash
@@ -289,6 +352,8 @@ python3 Scripts/DNSsifter-emumerate.py -d DOMAIN -w WORDLIST [-o OUTPUT]
 | `--max-depth` | `5` | Maximum subdomain recursion depth |
 | `--timeout` | `5` | Per-query DNS timeout (seconds) |
 | `--resolvers` | Google/Cloudflare/OpenDNS | Trusted confirmation resolvers |
+| `--insecure` | off | Skip TLS verification for passive sources (only if the local Python CA bundle is stale; results are re-validated via DNS regardless) |
+| `--deep-passive` | off | Also brute-force every live passive name (deeper, slower) |
 
 #### Example:
 ```bash
@@ -397,9 +462,12 @@ The figure below is generated directly from the released data with
 ### 8. Benchmarking vs Other Tools
 
 Compares DNSsifter against mature enumeration tools (**Amass, Subfinder, Sublist3r**)
-on the same seed domain, reporting **recall, precision, runtime, and depth** against
-a validated ground-truth set. Candidate names are re-resolved through the trusted
-resolver set so the comparison is consistent across tools.
+on the same seed domain, reporting **recall, precision, runtime, depth, and unique
+discoveries** against a validated ground-truth set. Candidate names are re-resolved
+through the trusted resolver set so the comparison is consistent across tools. See
+[How DNSsifter Compares](#how-dnssifter-compares) for the aggregate results. The
+harness writes results locally only — **no target domains or discovered hosts are
+committed to this repository** (the `domains/` and `results/` paths are gitignored).
 
 #### Command:
 ```bash
@@ -458,9 +526,13 @@ DNSsifter/
 │   ├── Convert_ArabicWordlist_To_EnglishPhonetics.py  # Converts Arabic to phonetics
 │   ├── DNS_Vulnerability_Scanner.sh            # Scans DNS vulnerabilities
 │   ├── DNSsifter-emumerate.py                  # Multithreaded recursive enumeration
+│   ├── passive_sources.py                      # Multi-source passive aggregation
 │   ├── cdri_score.py                           # CDRI scoring + sensitivity analysis
 │   ├── plot_cdri.py                            # Renders the CDRI figure (SVG, no deps)
 │   ├── benchmark_enumeration.py                # Recall/precision/runtime vs other tools
+│   ├── plot_benchmark.py                       # Renders the benchmark table + figure
+│   ├── sample_domains.py                       # Build a stratified benchmark sample
+│   ├── run_benchmark.sh                        # Turnkey benchmark runner
 │   └── Measurements/                           # DNS analysis module
 │       ├── dns_explorer/                       # DNS analysis utilities
 │       │   ├── dns_utils.py                    # Main DNS utility functions
@@ -473,7 +545,11 @@ DNSsifter/
 ├── Wordlists/                                  # English, Arabic, Arabizi, ASCII wordlists
 ├── Data/
 │   └── cdri_dimension_scores.csv               # Aggregated, anonymized CDRI data (Table 8)
-├── Figures/                                    # Tool screenshots
+├── Figures/                                    # Diagrams + tool screenshots (no domain data)
+│   ├── architecture_comparison.svg             # DNSsifter vs passive aggregators
+│   ├── passive_sources.svg                     # Multi-source aggregation diagram
+│   ├── benchmark_summary.svg                   # Aggregate benchmark metrics
+│   └── cdri_by_category.svg                    # CDRI by domain category
 ├── requirements.txt                            # Python dependencies
 ├── CITATION.cff                                # Citation metadata
 ├── REPRODUCIBILITY.md                          # Reproducibility appendix (params + equations)

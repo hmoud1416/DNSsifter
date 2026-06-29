@@ -34,12 +34,22 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+import os
+
 import requests
 
 try:
     import dns.resolver
 except ImportError:
     sys.exit("[!] dnspython is required: pip install dnspython")
+
+# Multi-source passive aggregation (crt.sh, Certspotter, HackerTarget, RapidDNS,
+# URLScan, Wayback, AlienVault, AnubisDB, ...). Lives alongside this script.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    import passive_sources
+except ImportError:
+    passive_sources = None
 
 # Default trusted recursive resolvers used for the double-resolution confirmation
 # step (Section 4.2). Google, Cloudflare, OpenDNS.
@@ -113,21 +123,24 @@ def detect_wildcard(seed_domain, resolver, limiter) -> bool:
     return hits >= 2
 
 
-def passive_discovery(seed_domain, timeout) -> set:
-    """Fetch known subdomains from Certificate Transparency (crt.sh)."""
-    found = set()
+def passive_discovery(seed_domain, timeout, insecure=False) -> set:
+    """Aggregate subdomains from many free passive sources (crt.sh, Certspotter,
+    HackerTarget, RapidDNS, URLScan, Wayback, AlienVault, AnubisDB, ...).
+
+    This is what gives mature tools like Subfinder their recall; by aggregating the
+    same sources AND layering active brute-force + recursion on top, DNSsifter
+    produces a superset of any single tool's results."""
+    if passive_sources is None:
+        return set()
     try:
-        url = f"https://crt.sh/?q=%.{seed_domain}&output=json"
-        resp = requests.get(url, timeout=timeout * 2)
-        if resp.status_code == 200:
-            for entry in resp.json():
-                for nm in entry.get("name_value", "").splitlines():
-                    nm = nm.strip().lstrip("*.").lower()
-                    if nm.endswith(seed_domain):
-                        found.add(nm)
+        names, counts = passive_sources.gather(seed_domain, timeout=max(timeout, 45),
+                                                insecure=insecure)
+        active = ", ".join(f"{k}:{v}" for k, v in sorted(counts.items()) if v)
+        print(f"[+] Passive sources -> {len(names)} candidates ({active})")
+        return names
     except Exception as e:
-        print(f"[!] CT-log lookup failed: {e}")
-    return found
+        print(f"[!] Passive aggregation failed: {e}")
+        return set()
 
 
 def load_words(path) -> list:
@@ -168,14 +181,24 @@ def enumerate_domain(seed_domain, words, cfg) -> set:
     limiter = RateLimiter(cfg.rate)
     discovered = set()
 
-    print(f"[+] Passive discovery (CT logs) for {seed_domain} ...")
-    for name in passive_discovery(seed_domain, cfg.timeout):
-        if resolves(name, resolver, limiter):
-            discovered.add(name)
-    print(f"[+] Passive stage found {len(discovered)} live names")
+    print(f"[+] Passive discovery for {seed_domain} ...")
+    candidates = passive_discovery(seed_domain, cfg.timeout, getattr(cfg, "insecure", False))
+    # Validate passive candidates concurrently (single-resolver resolve is enough
+    # to keep a live name; double-confirmation is applied to brute-force hits).
+    with ThreadPoolExecutor(max_workers=cfg.threads) as pool:
+        for name, ok in zip(candidates,
+                            pool.map(lambda n: resolves(n, resolver, limiter), candidates)):
+            if ok:
+                discovered.add(name)
+    print(f"[+] Passive stage: {len(discovered)} live names confirmed")
 
     print(f"[+] Active recursive enumeration (max depth {cfg.max_depth}) ...")
+    # Brute-force from the seed; recursion then expands confirmed brute-force hits.
+    # (Use --deep-passive to additionally brute-force every live passive name, which
+    # uncovers deep names no passive tool reaches, at significant extra cost.)
     current_level = {seed_domain}
+    if getattr(cfg, "deep_passive", False):
+        current_level = current_level | set(discovered)
     for depth in range(cfg.max_depth):
         new_active = enumerate_level(current_level, words, resolver,
                                      cfg.resolvers, limiter, cfg)
@@ -210,6 +233,13 @@ def main() -> None:
                     help="Maximum subdomain recursion depth.")
     ap.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT,
                     help="Per-query DNS timeout (seconds).")
+    ap.add_argument("--insecure", action="store_true",
+                    help="Skip TLS verification for passive HTTP sources (use only "
+                         "when the local Python CA bundle is stale; discovered names "
+                         "are re-validated via DNS regardless).")
+    ap.add_argument("--deep-passive", action="store_true",
+                    help="Also brute-force every live passive name (uncovers deep "
+                         "names, but multiplies runtime by the passive set size).")
     cfg = ap.parse_args()
 
     words = load_words(cfg.wordlist)

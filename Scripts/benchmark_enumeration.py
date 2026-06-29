@@ -55,6 +55,7 @@ import os
 import shutil
 import subprocess
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Set
 
 try:
@@ -166,6 +167,52 @@ def score(results: List[Dict], seed: str, do_validate: bool,
     return report
 
 
+def aggregate(domains: List[str], wordlist: str, out_dir: str,
+              do_validate: bool, workers: int) -> Dict:
+    """Run all tools across many seed domains in parallel and micro-average the
+    metrics. Each domain is processed independently (all four tools), then
+    per-domain true-positives / ground-truth sizes are summed into one report."""
+    os.makedirs(out_dir, exist_ok=True)
+    per_tool = {t: {"reported": 0, "tp": 0, "runtime_s": 0.0, "max_depth": 0,
+                    "available": True} for t in TOOL_COMMANDS}
+    gt_total = 0
+
+    def process(seed: str) -> Dict:
+        results = [run_tool(name, seed, wordlist, out_dir) for name in TOOL_COMMANDS]
+        rep = score(results, seed, do_validate, set())
+        return rep
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futs = {pool.submit(process, d): d for d in domains}
+        for i, fut in enumerate(as_completed(futs), 1):
+            rep = fut.result()
+            gt_total += rep["ground_truth_size"]
+            for t in rep["tools"]:
+                pt = per_tool[t["tool"]]
+                pt["reported"] += t["reported"]
+                pt["tp"] += t["true_positives"]
+                pt["runtime_s"] += (t["runtime_s"] or 0.0)
+                pt["max_depth"] = max(pt["max_depth"], t["max_depth"])
+                pt["available"] = pt["available"] and t["available"]
+            print(f"[{i}/{len(domains)}] {futs[fut]} done")
+
+    G = gt_total or 1
+    report = {"seed": f"<{len(domains)} domains>", "ground_truth_size": gt_total,
+              "tools": []}
+    for tool, pt in per_tool.items():
+        report["tools"].append({
+            "tool": tool, "available": pt["available"],
+            "reported": pt["reported"], "validated": pt["tp"],
+            "true_positives": pt["tp"],
+            "recall": round(pt["tp"] / G, 4),
+            "precision": round(pt["tp"] / (pt["reported"] or 1), 4),
+            "runtime_s": round(pt["runtime_s"], 2),
+            "max_depth": pt["max_depth"],
+        })
+    report["tools"].sort(key=lambda t: t["recall"], reverse=True)
+    return report
+
+
 def print_report(report: Dict) -> None:
     print(f"\nSeed: {report['seed']}   "
           f"Ground-truth (validated) size: {report['ground_truth_size']}")
@@ -182,6 +229,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--domain", help="Seed domain to benchmark (live mode).")
+    ap.add_argument("--domain-list", help="File of seed domains (one per line); "
+                    "runs all tools across every domain in parallel and "
+                    "micro-averages the metrics.")
+    ap.add_argument("--workers", type=int, default=8,
+                    help="Parallel domains processed at once (--domain-list mode).")
     ap.add_argument("--wordlist", help="Wordlist for DNSsifter (live mode).")
     ap.add_argument("--out", default="benchmark_results.json")
     ap.add_argument("--out-dir", default="benchmark_runs",
@@ -198,6 +250,19 @@ def main() -> None:
     args = ap.parse_args()
 
     seed = args.domain or ""
+    if args.domain_list:
+        if not args.wordlist:
+            ap.error("--wordlist is required with --domain-list")
+        with open(args.domain_list, encoding="utf-8") as fh:
+            domains = [ln.strip() for ln in fh if ln.strip()]
+        report = aggregate(domains, args.wordlist, args.out_dir,
+                           args.validate or bool(args.ground_truth), args.workers)
+        print_report(report)
+        with open(args.out, "w", encoding="utf-8") as fh:
+            json.dump(report, fh, indent=2)
+        print(f"\nFull report written to {args.out}")
+        return
+
     if args.score_only:
         results = []
         for pair in args.result:

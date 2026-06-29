@@ -1,3 +1,14 @@
 output/
+results/
+benchmark_runs/
+# Discovered/real domain data must never be published in the repo.
+domains/
+domains_*/
+*.subdomains.txt
+benchmark_*.json
 *.pyc
+__pycache__/
 venv/
+# API keys / secrets — keep out of the repo (read from environment instead).
+.env
+*.key
