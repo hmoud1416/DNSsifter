@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use DNSsifter or the CDRI data in your research, please cite the paper below."
+title: "DNSsifter"
+abstract: >-
+  DNSsifter is a multithreaded, recursive DNS enumeration and measurement toolkit
+  with customized English, Arabic, and Arabizi wordlists, wildcard-aware probing,
+  trusted-resolver confirmation, and a reproducible Composite DNS Resilience Index
+  (CDRI) scoring pipeline.
+type: software
+authors:
+  - family-names: Alharbi
+    given-names: Fatemah
+  - family-names: Alhalmani
+    given-names: Hamoud
+  - family-names: Showail
+    given-names: Ahmad
+  - family-names: Alhuzali
+    given-names: Abeer
+repository-code: "https://github.com/hmoud1416/DNSsifter"
+keywords:
+  - DNS
+  - measurement
+  - network-security
+  - resilience
+  - Saudi Arabia
+preferred-citation:
+  type: article
+  title: "A Longitudinal Assessment of DNS Resilience and Robustness in Saudi Arabia"
+  authors:
+    - family-names: Alharbi
+      given-names: Fatemah
+    - family-names: Alhalmani
+      given-names: Hamoud
+    - family-names: Showail
+      given-names: Ahmad
+    - family-names: Alhuzali
+      given-names: Abeer
+  journal: "Scientific Reports"
+  year: 2025

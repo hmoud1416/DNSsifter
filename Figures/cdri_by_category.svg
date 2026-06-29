@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="500" viewBox="0 0 620 500" font-family="Segoe UI, Arial, sans-serif">
+<rect width="620" height="500" fill="#ffffff"/>
+<text x="90" y="30" font-size="18" font-weight="700" fill="#1a1a1a">Composite DNS Resilience Index (CDRI) by Category</text>
+<text x="90" y="50" font-size="12" fill="#666">Higher is better. Source: Table 8 (Alharbi et al.).</text>
+<line x1="90.0" y1="62" x2="90.0" y2="460" stroke="#e6e6e6" stroke-width="1"/>
+<text x="90.0" y="478" font-size="11" fill="#888" text-anchor="middle">0.00</text>
+<line x1="205.0" y1="62" x2="205.0" y2="460" stroke="#e6e6e6" stroke-width="1"/>
+<text x="205.0" y="478" font-size="11" fill="#888" text-anchor="middle">0.25</text>
+<line x1="320.0" y1="62" x2="320.0" y2="460" stroke="#e6e6e6" stroke-width="1"/>
+<text x="320.0" y="478" font-size="11" fill="#888" text-anchor="middle">0.50</text>
+<line x1="435.0" y1="62" x2="435.0" y2="460" stroke="#e6e6e6" stroke-width="1"/>
+<text x="435.0" y="478" font-size="11" fill="#888" text-anchor="middle">0.75</text>
+<line x1="550.0" y1="62" x2="550.0" y2="460" stroke="#e6e6e6" stroke-width="1"/>
+<text x="550.0" y="478" font-size="11" fill="#888" text-anchor="middle">1.00</text>
+<text x="82" y="87.7" font-size="13" fill="#222" text-anchor="end">.sa</text>
+<rect x="90" y="70" width="286.6" height="26" rx="3" fill="#4a9d5b"/>
+<text x="382.6" y="87.7" font-size="12" font-weight="600" fill="#333">0.623</text>
+<text x="82" y="125.7" font-size="13" fill="#222" text-anchor="end">.gov.sa</text>
+<rect x="90" y="108" width="252.4" height="26" rx="3" fill="#4a9d5b"/>
+<text x="348.4" y="125.7" font-size="12" font-weight="600" fill="#333">0.549</text>
+<text x="82" y="163.7" font-size="13" fill="#222" text-anchor="end">.edu.sa</text>
+<rect x="90" y="146" width="243.6" height="26" rx="3" fill="#4a9d5b"/>
+<text x="339.6" y="163.7" font-size="12" font-weight="600" fill="#333">0.530</text>
+<text x="82" y="201.7" font-size="13" fill="#222" text-anchor="end">.com.sa</text>
+<rect x="90" y="184" width="229.7" height="26" rx="3" fill="#e0a44a"/>
+<text x="325.7" y="201.7" font-size="12" font-weight="600" fill="#333">0.499</text>
+<text x="82" y="239.7" font-size="13" fill="#222" text-anchor="end">.sch.sa</text>
+<rect x="90" y="222" width="181.9" height="26" rx="3" fill="#e0a44a"/>
+<text x="277.9" y="239.7" font-size="12" font-weight="600" fill="#333">0.395</text>
+<text x="82" y="277.7" font-size="13" fill="#222" text-anchor="end">.net.sa</text>
+<rect x="90" y="260" width="176.9" height="26" rx="3" fill="#e0a44a"/>
+<text x="272.9" y="277.7" font-size="12" font-weight="600" fill="#333">0.385</text>
+<text x="82" y="315.7" font-size="13" fill="#222" text-anchor="end">.pub.sa</text>
+<rect x="90" y="298" width="173.2" height="26" rx="3" fill="#e0a44a"/>
+<text x="269.2" y="315.7" font-size="12" font-weight="600" fill="#333">0.377</text>
+<text x="82" y="353.7" font-size="13" fill="#222" text-anchor="end">.org.sa</text>
+<rect x="90" y="336" width="169.7" height="26" rx="3" fill="#e0a44a"/>
+<text x="265.7" y="353.7" font-size="12" font-weight="600" fill="#333">0.369</text>
+<text x="82" y="391.7" font-size="13" fill="#222" text-anchor="end">.idn.sa</text>
+<rect x="90" y="374" width="167.9" height="26" rx="3" fill="#e0a44a"/>
+<text x="263.9" y="391.7" font-size="12" font-weight="600" fill="#333">0.365</text>
+<text x="82" y="429.7" font-size="13" fill="#222" text-anchor="end">.med.sa</text>
+<rect x="90" y="412" width="44.6" height="26" rx="3" fill="#d64545"/>
+<text x="140.6" y="429.7" font-size="12" font-weight="600" fill="#333">0.097</text>
+</svg>

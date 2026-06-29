@@ -21,9 +21,14 @@ DNSsifter is a high-performance, asynchronous tool built for DNS brute-forcing a
   - [2. Convert Arabic Wordlist to ASCII](#2-convert-arabic-wordlist-to-ascii)
   - [3. Convert Arabic Wordlist to English Phonetics](#3-convert-arabic-wordlist-to-english-phonetics)
   - [4. DNS Vulnerability Scanner](#4-dns-vulnerability-scanner)
-  - [5. DNS Enumeration](#5-dns-enumration)
+  - [5. DNS Enumeration](#5-dns-enumeration)
   - [6. DNS Explorer (Measurements)](#6-dns-explorer-measurements)
+  - [7. CDRI Scoring](#7-cdri-scoring)
+  - [8. Benchmarking vs Other Tools](#8-benchmarking-vs-other-tools)
+- [Reproducibility](#reproducibility)
+- [Data Availability](#data-availability)
 - [Directory Structure](#directory-structure)
+- [Citation](#citation)
 - [Contributing](#contributing)
 
 ---
@@ -124,12 +129,14 @@ The following table summarizes the vulnerabilities DNSsifter checks for:
 ### Prerequisites
 
 - Python 3.x
-- Bash
+- Bash (for the shell-based vulnerability scanner) and `dig`/`delv` (bind-utils)
 - Required Python packages:
   ```bash
-  pip install geoip2 argparse tqdm colorama
+  pip install -r requirements.txt
+  # (requests, dnspython, geoip2, tqdm, colorama)
   ```
-- MaxMind GeoIP databases (place in `data/` directory):
+- For the live benchmark: `amass`, `subfinder`, `sublist3r` on `PATH` (optional)
+- MaxMind GeoIP databases (place in `Scripts/Measurements/data/` directory):
   - GeoLite2-City.mmdb
   - GeoLite2-Country.mmdb
   - GeoLite2-ASN.mmdb
@@ -138,8 +145,8 @@ The following table summarizes the vulnerabilities DNSsifter checks for:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/DNS-Sifter.git
-   cd DNS-Sifter
+   git clone https://github.com/hmoud1416/DNSsifter.git
+   cd DNSsifter
    ```
 
 2. Install dependencies:
@@ -261,11 +268,34 @@ Output (`results.json`):
 
 ### 5. DNS Enumeration
 
-This script converts Arabic words to their ASCII-compatible Punycode representation.
+Multithreaded, recursive DNS enumeration with wildcard control and trusted-resolver
+confirmation. It combines passive discovery (Certificate Transparency logs) with
+active brute-forcing of a wordlist, enumerating level-by-level until no new active
+names are found. All measurement parameters (rate limit, wildcard cap, resolvers,
+recursion depth) are exposed as flags so the exact configuration used in the paper
+is reproducible — see [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
 
 #### Command:
 ```bash
 python3 Scripts/DNSsifter-emumerate.py -d DOMAIN -w WORDLIST [-o OUTPUT]
+```
+
+#### Key parameters (paper defaults):
+| Flag | Default | Meaning |
+|------|---------|---------|
+| `--rate` | `10` | Max DNS queries per second per seed domain |
+| `--wildcard-cap` | `1000` | Max probes for a wildcard-enabled domain |
+| `--threads` | `20` | Concurrent resolution workers |
+| `--max-depth` | `5` | Maximum subdomain recursion depth |
+| `--timeout` | `5` | Per-query DNS timeout (seconds) |
+| `--resolvers` | Google/Cloudflare/OpenDNS | Trusted confirmation resolvers |
+
+#### Example:
+```bash
+python3 Scripts/DNSsifter-emumerate.py -d example.com \
+    -w Wordlists/English_Wordlist_Subdomain.txt \
+    --rate 10 --wildcard-cap 1000 --max-depth 5 \
+    -o results/example_subdomains.txt
 ```
 
 
@@ -331,27 +361,136 @@ dnsexplorer --domains example.com google.com --threads
 
 ---
 
+### 7. CDRI Scoring
 
+Reproduces the **Composite DNS Resilience Index (CDRI)** — the weighted additive
+index over the seven resilience dimensions. The script ships with the aggregated,
+anonymized dimension scores for every SLD/ccTLD and reproduces the published ranking
+exactly. It also includes a Monte-Carlo **weight-sensitivity analysis** to
+demonstrate the robustness of the sector ranking under alternative weight sets.
+
+Depends only on the Python standard library. Full equations and variable
+definitions are in [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
+
+#### Command:
+```bash
+# Reproduce the published CDRI ranking (.sa = 0.623 ... .med.sa = 0.097)
+python3 Scripts/cdri_score.py --input Data/cdri_dimension_scores.csv
+
+# Weight-sensitivity / robustness analysis
+python3 Scripts/cdri_score.py --input Data/cdri_dimension_scores.csv \
+        --sensitivity --trials 10000 --jitter 0.05
+```
+
+Default weights (sum to 1.0): `w1=0.20` (NS redundancy/diversity), `w2=0.15`
+(delegation correctness), `w3=0.10` (provider dependency), `w4=0.15`
+(parent–child consistency), `w5=0.10` (Anycast), `w6=0.20` (DNSSEC health),
+`w7=0.10` (caching).
+
+The figure below is generated directly from the released data with
+`python3 Scripts/plot_cdri.py` (dependency-free, renders on GitHub):
+
+![CDRI by domain category](Figures/cdri_by_category.svg)
+
+---
+
+### 8. Benchmarking vs Other Tools
+
+Compares DNSsifter against mature enumeration tools (**Amass, Subfinder, Sublist3r**)
+on the same seed domain, reporting **recall, precision, runtime, and depth** against
+a validated ground-truth set. Candidate names are re-resolved through the trusted
+resolver set so the comparison is consistent across tools.
+
+#### Command:
+```bash
+# Live benchmark (requires amass/subfinder/sublist3r on PATH)
+python3 Scripts/benchmark_enumeration.py \
+    --domain example.com \
+    --wordlist Wordlists/English_Wordlist_Subdomain.txt \
+    --out results/benchmark_example.json
+
+# Score pre-collected outputs offline (no re-run)
+python3 Scripts/benchmark_enumeration.py --score-only --validate \
+    --result DNSsifter=out/dnssifter.txt --result Amass=out/amass.txt \
+    --result Subfinder=out/subfinder.txt --result Sublist3r=out/sublist3r.txt \
+    --out results/benchmark_example.json
+```
+
+---
+
+## Reproducibility
+
+The full reproducibility appendix — exact query schedule, measurement dates,
+resolvers, filtering thresholds, wildcard handling rules, DNSsifter parameters, and
+**all metric/CDRI equations with complete variable definitions** — is documented in:
+
+➡️ **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**
+
+Highlights:
+- Active measurement campaign: **2024-09-04 to 2024-12-30**, multiple rounds averaged.
+- Single vantage point (Riyadh) and single validating resolver (`8.8.8.8`) limitations
+  are stated explicitly, with guidance for multi-vantage replication.
+- Wildcard zones detected via random-label probing and hard-capped at **1,000 probes/domain**.
+- DNSSEC validation via Google `8.8.8.8` + `delv`; Anycast inferred via iGreedy over
+  **500 RIPE Atlas probes** (≥100 km apart).
+
+## Data Availability
+
+To align with open-science principles, this repository releases an **aggregated,
+anonymized** dataset sufficient to reproduce every CDRI result in the paper:
+
+- [`Data/cdri_dimension_scores.csv`](Data/cdri_dimension_scores.csv) — normalized
+  `S1..S7` dimension scores for all ten SLD/ccTLD categories (paper Table 8).
+
+Raw per-domain measurement records may identify third-party operators and are
+available from the corresponding author on reasonable request, subject to
+responsible-disclosure constraints.
+
+---
 
 ## Directory Structure
 
 ```
-DNS-Sifter/
+DNSsifter/
 ├── Scripts/
-│   ├── Convert_ArabicWordlist_To_Ascii.py       # Converts Arabic to ASCII
+│   ├── translate_word_to_arabic.py             # Translate EN terms to Arabic
+│   ├── Convert_ArabicWordlist_To_Ascii.py      # Converts Arabic to ASCII (Punycode)
 │   ├── Convert_ArabicWordlist_To_EnglishPhonetics.py  # Converts Arabic to phonetics
 │   ├── DNS_Vulnerability_Scanner.sh            # Scans DNS vulnerabilities
+│   ├── DNSsifter-emumerate.py                  # Multithreaded recursive enumeration
+│   ├── cdri_score.py                           # CDRI scoring + sensitivity analysis
+│   ├── plot_cdri.py                            # Renders the CDRI figure (SVG, no deps)
+│   ├── benchmark_enumeration.py                # Recall/precision/runtime vs other tools
 │   └── Measurements/                           # DNS analysis module
 │       ├── dns_explorer/                       # DNS analysis utilities
-│       │   ├── __init__.py
 │       │   ├── dns_utils.py                    # Main DNS utility functions
 │       │   ├── geoip_utils.py                  # GeoIP lookup utilities
 │       │   ├── main.py                         # Entry point for DNS Explorer
-│       │   ├── output_utils.py                 # Output handling utilities
-│       │   └── tests/                          # Unit tests
+│       │   └── output_utils.py                 # Output handling utilities
+│       ├── data/                               # MaxMind GeoLite2 databases
+│       ├── tests/                              # Unit tests
 │       └── setup.py                            # Setup script
+├── Wordlists/                                  # English, Arabic, Arabizi, ASCII wordlists
+├── Data/
+│   └── cdri_dimension_scores.csv               # Aggregated, anonymized CDRI data (Table 8)
+├── Figures/                                    # Tool screenshots
+├── requirements.txt                            # Python dependencies
+├── CITATION.cff                                # Citation metadata
+├── REPRODUCIBILITY.md                          # Reproducibility appendix (params + equations)
 └── README.md                                   # This file
 ```
+
+---
+
+## Citation
+
+If you use DNSsifter or the CDRI data in your research, please cite:
+
+> Alharbi, F., Alhalmani, H., Showail, A., & Alhuzali, A.
+> *A Longitudinal Assessment of DNS Resilience and Robustness in Saudi Arabia.*
+> Scientific Reports (2025).
+
+Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
 
 ---
 
