@@ -79,19 +79,47 @@ needed afterwards.
 
 ## How DNSsifter Compares
 
-On a stratified, DNS-validated benchmark, the upgraded passive aggregation plus
-DNSsifter's active and recursive stages raise recall by **~16×** over the original
-single-source version, reaching near-parity with the strongest passive tool while
-keeping **perfect precision** — where passive tools leave roughly three-quarters of
-their output unresolved. DNSsifter also surfaces hundreds of **unique live hosts**
-that no passive tool finds, because they exist only via active enumeration, not in
-any certificate or passive-DNS database.
+Most popular tools occupy a single niche: **Subfinder, Findomain, Assetfinder, and
+theHarvester** are passive-only; **Gobuster** is brute-force-only; **Amass, BBOT, and
+Knockpy** combine several techniques. DNSsifter is the **only** tool that combines all
+six capabilities below — and the only one shipping **Arabic / Arabizi wordlists**, the
+single most relevant capability for discovering Arabic-region domains.
 
-![Benchmark summary](Figures/benchmark_summary.svg)
+![Capability comparison vs popular subdomain tools](Figures/tool_comparison_matrix.svg)
 
-> The numbers above are aggregate, method-level metrics. To reproduce them on your
-> own targets, see [Benchmarking vs Other Tools](#8-benchmarking-vs-other-tools).
-> No target domains or discovered host data are published in this repository.
+### Numeric benchmark
+
+On a stratified sample of 12 active Saudi seed domains (Riyadh vantage), every
+candidate from every tool is re-resolved through trusted resolvers (Google,
+Cloudflare, OpenDNS); the validated union (2,815 live hosts) is the ground truth.
+DNSsifter leads on **both recall and precision** — it is the only tool that is at
+once the most complete *and* 100% live:
+
+| Tool | Reported | Validated | Recall | Precision | Runtime/domain | Depth | Unique live |
+|------|---------:|----------:|-------:|----------:|---------------:|------:|------------:|
+| **DNSsifter** | 2,332 | **2,332** | **0.828** | **1.000** | 52 s | 6 | 362 |
+| Subfinder | 18,842 | 2,243 | 0.797 | 0.119 | 22 s | 6 | 458 |
+| Assetfinder | 2,537 | 1,234 | 0.438 | 0.486 | 8 s | 6 | 3 |
+| Findomain | 1,382 | 680 | 0.242 | 0.492 | 60 s | 5 | 0 |
+| Sublist3r | 138 | 137 | 0.049 | 0.993 | 16 s | 2 | 1 |
+| Amass¹ | 5 | 3 | 0.001 | 0.600 | 161 s | 0 | 0 |
+
+¹ Amass v5 requires a datasource configuration file (API keys) and stores results in
+a graph database rather than standard output; run with no configuration it returns
+almost nothing. The row reflects out-of-the-box behaviour.
+
+![Numeric comparison vs mature subdomain tools](Figures/tool_benchmark.svg)
+
+Subfinder reports the most names (18,842) but **88% of them no longer resolve**
+(precision 0.119); DNSsifter reports only verified-live hosts (precision 1.000) and
+still achieves the **highest recall**, because its active brute-force and recursion
+discover live hosts that exist in no passive database. The data and figure regenerate
+with `python3 Scripts/plot_tool_benchmark.py` from
+[`Data/tool_benchmark.csv`](Data/tool_benchmark.csv).
+
+> All values are aggregate, method-level metrics. To reproduce them on your own
+> targets see [Benchmarking vs Other Tools](#8-benchmarking-vs-other-tools).
+> **No target domains or discovered host data are published in this repository.**
 
 ---
 
@@ -530,7 +558,9 @@ DNSsifter/
 │   ├── cdri_score.py                           # CDRI scoring + sensitivity analysis
 │   ├── plot_cdri.py                            # Renders the CDRI figure (SVG, no deps)
 │   ├── benchmark_enumeration.py                # Recall/precision/runtime vs other tools
-│   ├── plot_benchmark.py                       # Renders the benchmark table + figure
+│   ├── plot_benchmark.py                       # Renders a single-run benchmark table + figure
+│   ├── plot_tool_matrix.py                     # Renders the capability-comparison matrix
+│   ├── plot_tool_benchmark.py                  # Renders the numeric tool-benchmark figure
 │   ├── sample_domains.py                       # Build a stratified benchmark sample
 │   ├── run_benchmark.sh                        # Turnkey benchmark runner
 │   └── Measurements/                           # DNS analysis module
@@ -544,11 +574,13 @@ DNSsifter/
 │       └── setup.py                            # Setup script
 ├── Wordlists/                                  # English, Arabic, Arabizi, ASCII wordlists
 ├── Data/
-│   └── cdri_dimension_scores.csv               # Aggregated, anonymized CDRI data (Table 8)
+│   ├── cdri_dimension_scores.csv               # Aggregated, anonymized CDRI data (Table 8)
+│   └── tool_benchmark.csv                       # Aggregate tool-comparison metrics (no domains)
 ├── Figures/                                    # Diagrams + tool screenshots (no domain data)
 │   ├── architecture_comparison.svg             # DNSsifter vs passive aggregators
 │   ├── passive_sources.svg                     # Multi-source aggregation diagram
-│   ├── benchmark_summary.svg                   # Aggregate benchmark metrics
+│   ├── tool_comparison_matrix.svg              # Capability matrix vs 9 popular tools
+│   ├── tool_benchmark.svg                      # Numeric recall/precision comparison
 │   └── cdri_by_category.svg                    # CDRI by domain category
 ├── requirements.txt                            # Python dependencies
 ├── CITATION.cff                                # Citation metadata

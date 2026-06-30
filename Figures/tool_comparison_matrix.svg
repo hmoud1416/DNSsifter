@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="506" viewBox="0 0 768 506" font-family="Segoe UI, Arial, sans-serif">
+<rect width="768" height="506" fill="#ffffff"/>
+<text x="24" y="36" font-size="20" font-weight="700" fill="#1a1a1a">Capability comparison vs popular subdomain tools</text>
+<text x="24" y="58" font-size="12.5" fill="#666">&#10003; full &#160;&#160; &#9680; partial / optional &#160;&#160; &#8211; none. Ratings from each tool&#8217;s official documentation.</text>
+<rect x="560" y="70" width="92" height="366" fill="#f3f7ec"/>
+<text x="238" y="68" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">Passive</text>
+<text x="238" y="82" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">sources</text>
+<text x="330" y="68" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">Active</text>
+<text x="330" y="82" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">brute-force</text>
+<text x="422" y="68" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">Recursive</text>
+<text x="422" y="82" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">multi-level</text>
+<text x="514" y="68" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">Liveness</text>
+<text x="514" y="82" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">validation</text>
+<text x="606" y="68" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">Arabic /</text>
+<text x="606" y="82" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">Arabizi</text>
+<text x="698" y="68" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">Wildcard</text>
+<text x="698" y="82" font-size="11.5" font-weight="600" fill="#333" text-anchor="middle">handling</text>
+<rect x="24" y="96" width="720" height="34" fill="#eef6e3"/>
+<text x="30" y="117" font-size="12.5" font-weight="700" fill="#1a1a1a">DNSsifter (ours)</text>
+<circle cx="238" cy="113" r="11" fill="#eaf3de"/>
+<text x="238" y="117" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="330" cy="113" r="11" fill="#eaf3de"/>
+<text x="330" y="117" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="422" cy="113" r="11" fill="#eaf3de"/>
+<text x="422" y="117" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="514" cy="113" r="11" fill="#eaf3de"/>
+<text x="514" y="117" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="606" cy="113" r="11" fill="#eaf3de"/>
+<text x="606" y="117" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="698" cy="113" r="11" fill="#eaf3de"/>
+<text x="698" y="117" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<line x1="24" y1="130" x2="744" y2="130" stroke="#eee"/>
+<text x="30" y="151" font-size="12.5" font-weight="400" fill="#1a1a1a">OWASP Amass</text>
+<circle cx="238" cy="147" r="11" fill="#eaf3de"/>
+<text x="238" y="151" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="330" cy="147" r="11" fill="#eaf3de"/>
+<text x="330" y="151" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="422" cy="147" r="11" fill="#eaf3de"/>
+<text x="422" y="151" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="514" cy="147" r="11" fill="#eaf3de"/>
+<text x="514" y="151" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="606" cy="147" r="11" fill="#f4f3ee"/>
+<text x="606" y="151" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="147" r="11" fill="#eaf3de"/>
+<text x="698" y="151" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<line x1="24" y1="164" x2="744" y2="164" stroke="#eee"/>
+<text x="30" y="185" font-size="12.5" font-weight="400" fill="#1a1a1a">BBOT</text>
+<circle cx="238" cy="181" r="11" fill="#eaf3de"/>
+<text x="238" y="185" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="330" cy="181" r="11" fill="#eaf3de"/>
+<text x="330" y="185" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="422" cy="181" r="11" fill="#eaf3de"/>
+<text x="422" y="185" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="514" cy="181" r="11" fill="#eaf3de"/>
+<text x="514" y="185" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="606" cy="181" r="11" fill="#f4f3ee"/>
+<text x="606" y="185" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="181" r="11" fill="#eaf3de"/>
+<text x="698" y="185" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<line x1="24" y1="198" x2="744" y2="198" stroke="#eee"/>
+<text x="30" y="219" font-size="12.5" font-weight="400" fill="#1a1a1a">Knockpy</text>
+<circle cx="238" cy="215" r="11" fill="#fef4e2"/>
+<text x="238" y="219" font-size="14" font-weight="700" fill="#b9770e" text-anchor="middle">◐</text>
+<circle cx="330" cy="215" r="11" fill="#eaf3de"/>
+<text x="330" y="219" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="422" cy="215" r="11" fill="#eaf3de"/>
+<text x="422" y="219" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="514" cy="215" r="11" fill="#eaf3de"/>
+<text x="514" y="219" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="606" cy="215" r="11" fill="#f4f3ee"/>
+<text x="606" y="219" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="215" r="11" fill="#eaf3de"/>
+<text x="698" y="219" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<line x1="24" y1="232" x2="744" y2="232" stroke="#eee"/>
+<text x="30" y="253" font-size="12.5" font-weight="400" fill="#1a1a1a">Gobuster (DNS)</text>
+<circle cx="238" cy="249" r="11" fill="#f4f3ee"/>
+<text x="238" y="253" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="330" cy="249" r="11" fill="#eaf3de"/>
+<text x="330" y="253" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="422" cy="249" r="11" fill="#f4f3ee"/>
+<text x="422" y="253" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="514" cy="249" r="11" fill="#eaf3de"/>
+<text x="514" y="253" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="606" cy="249" r="11" fill="#f4f3ee"/>
+<text x="606" y="253" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="249" r="11" fill="#eaf3de"/>
+<text x="698" y="253" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<line x1="24" y1="266" x2="744" y2="266" stroke="#eee"/>
+<text x="30" y="287" font-size="12.5" font-weight="400" fill="#1a1a1a">Subfinder</text>
+<circle cx="238" cy="283" r="11" fill="#eaf3de"/>
+<text x="238" y="287" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="330" cy="283" r="11" fill="#f4f3ee"/>
+<text x="330" y="287" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="422" cy="283" r="11" fill="#f4f3ee"/>
+<text x="422" y="287" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="514" cy="283" r="11" fill="#f4f3ee"/>
+<text x="514" y="287" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="606" cy="283" r="11" fill="#f4f3ee"/>
+<text x="606" y="287" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="283" r="11" fill="#fef4e2"/>
+<text x="698" y="287" font-size="14" font-weight="700" fill="#b9770e" text-anchor="middle">◐</text>
+<line x1="24" y1="300" x2="744" y2="300" stroke="#eee"/>
+<text x="30" y="321" font-size="12.5" font-weight="400" fill="#1a1a1a">Findomain</text>
+<circle cx="238" cy="317" r="11" fill="#eaf3de"/>
+<text x="238" y="321" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="330" cy="317" r="11" fill="#f4f3ee"/>
+<text x="330" y="321" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="422" cy="317" r="11" fill="#f4f3ee"/>
+<text x="422" y="321" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="514" cy="317" r="11" fill="#fef4e2"/>
+<text x="514" y="321" font-size="14" font-weight="700" fill="#b9770e" text-anchor="middle">◐</text>
+<circle cx="606" cy="317" r="11" fill="#f4f3ee"/>
+<text x="606" y="321" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="317" r="11" fill="#f4f3ee"/>
+<text x="698" y="321" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<line x1="24" y1="334" x2="744" y2="334" stroke="#eee"/>
+<text x="30" y="355" font-size="12.5" font-weight="400" fill="#1a1a1a">Sublist3r</text>
+<circle cx="238" cy="351" r="11" fill="#eaf3de"/>
+<text x="238" y="355" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="330" cy="351" r="11" fill="#fef4e2"/>
+<text x="330" y="355" font-size="14" font-weight="700" fill="#b9770e" text-anchor="middle">◐</text>
+<circle cx="422" cy="351" r="11" fill="#f4f3ee"/>
+<text x="422" y="355" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="514" cy="351" r="11" fill="#fef4e2"/>
+<text x="514" y="355" font-size="14" font-weight="700" fill="#b9770e" text-anchor="middle">◐</text>
+<circle cx="606" cy="351" r="11" fill="#f4f3ee"/>
+<text x="606" y="355" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="351" r="11" fill="#f4f3ee"/>
+<text x="698" y="355" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<line x1="24" y1="368" x2="744" y2="368" stroke="#eee"/>
+<text x="30" y="389" font-size="12.5" font-weight="400" fill="#1a1a1a">Assetfinder</text>
+<circle cx="238" cy="385" r="11" fill="#eaf3de"/>
+<text x="238" y="389" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="330" cy="385" r="11" fill="#f4f3ee"/>
+<text x="330" y="389" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="422" cy="385" r="11" fill="#f4f3ee"/>
+<text x="422" y="389" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="514" cy="385" r="11" fill="#f4f3ee"/>
+<text x="514" y="389" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="606" cy="385" r="11" fill="#f4f3ee"/>
+<text x="606" y="389" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="385" r="11" fill="#f4f3ee"/>
+<text x="698" y="389" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<line x1="24" y1="402" x2="744" y2="402" stroke="#eee"/>
+<text x="30" y="423" font-size="12.5" font-weight="400" fill="#1a1a1a">theHarvester</text>
+<circle cx="238" cy="419" r="11" fill="#eaf3de"/>
+<text x="238" y="423" font-size="14" font-weight="700" fill="#2e7d32" text-anchor="middle">✓</text>
+<circle cx="330" cy="419" r="11" fill="#f4f3ee"/>
+<text x="330" y="423" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="422" cy="419" r="11" fill="#f4f3ee"/>
+<text x="422" y="423" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="514" cy="419" r="11" fill="#f4f3ee"/>
+<text x="514" y="423" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="606" cy="419" r="11" fill="#f4f3ee"/>
+<text x="606" y="423" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<circle cx="698" cy="419" r="11" fill="#f4f3ee"/>
+<text x="698" y="423" font-size="14" font-weight="700" fill="#bdbdb6" text-anchor="middle">–</text>
+<line x1="24" y1="436" x2="744" y2="436" stroke="#eee"/>
+<text x="24" y="466" font-size="12.5" fill="#173404" font-weight="600">DNSsifter is the only tool combining all six — and the only one with Arabic / Arabizi wordlists,</text>
+<text x="24" y="484" font-size="12.5" fill="#173404" font-weight="600">the capability that matters most for Arabic-region domain discovery.</text>
+</svg>

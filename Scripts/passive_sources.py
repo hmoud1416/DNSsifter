@@ -28,6 +28,7 @@ import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import TimeoutError as FuturesTimeout
 
 import requests
 import urllib3
@@ -40,6 +41,10 @@ UA = {"User-Agent": "Mozilla/5.0 (compatible; DNSsifter/2.0; +passive-recon)"}
 #   export CERTSPOTTER_API_KEY=... (Certspotter, removes the anonymous result cap)
 VT_API_KEY = os.environ.get("VT_API_KEY", "")
 CERTSPOTTER_API_KEY = os.environ.get("CERTSPOTTER_API_KEY", "")
+# Fast mode (set DNSSIFTER_FAST=1) trades a little crt.sh recall on very large
+# domains for far lower latency — used for large-scale benchmarks where crt.sh's
+# patient retry loop would otherwise dominate runtime.
+FAST = bool(os.environ.get("DNSSIFTER_FAST", ""))
 
 
 def _session(insecure: bool) -> requests.Session:
@@ -52,13 +57,16 @@ def _session(insecure: bool) -> requests.Session:
 
 
 def _get(s, url, timeout, retries=3, backoff=4):
+    if FAST:  # one shot, no backoff sleeps — never block the parallel pool
+        retries, backoff = 1, 0
     last = None
     for i in range(retries):
         try:
             return s.get(url, timeout=timeout)
         except Exception as e:  # noqa: BLE001 - we retry on any transport error
             last = e
-            time.sleep(backoff * (i + 1))
+            if backoff:
+                time.sleep(backoff * (i + 1))
     raise last
 
 
@@ -70,10 +78,11 @@ def src_crtsh(s, d, t):
     out = set()
     urls = [f"https://crt.sh/?q=%.{d}&output=json",
             f"https://crt.sh/?q=%.{d}&output=json&exclude=expired"]
-    for i in range(8):
-        url = urls[0] if i < 5 else urls[1]
+    attempts, ctimeout, backoff = (1, 35, 0) if FAST else (8, max(t, 120), 5)
+    for i in range(attempts):
+        url = urls[0] if i < attempts - 1 else urls[1]
         try:
-            r = s.get(url, timeout=max(t, 120))
+            r = s.get(url, timeout=ctimeout)
             if r.status_code == 200 and "json" in r.headers.get("content-type", ""):
                 for e in r.json():
                     for n in str(e.get("name_value", "")).splitlines():
@@ -82,7 +91,7 @@ def src_crtsh(s, d, t):
                     return out
         except Exception:  # noqa: BLE001
             pass
-        time.sleep(5 * (i + 1))
+        time.sleep(backoff * (i + 1))
     return out
 
 
@@ -95,13 +104,13 @@ def src_commoncrawl(s, d, t):
                       timeout=t).json()
     except Exception:  # noqa: BLE001
         return out
-    for coll in colls[:2]:  # two most recent indexes
+    for coll in (colls[:1] if FAST else colls[:2]):  # most recent index/indexes
         api = coll.get("cdx-api")
         if not api:
             continue
         try:
-            r = s.get(f"{api}?url=*.{d}&output=json&fl=url&limit=20000",
-                      timeout=max(t, 90))
+            r = s.get(f"{api}?url=*.{d}&output=json&fl=url&limit={8000 if FAST else 20000}",
+                      timeout=t if FAST else max(t, 90))
             for line in r.text.splitlines():
                 m = re.search(r"https?://([\w.\-]+)", line)
                 if m:
@@ -116,7 +125,7 @@ def src_certspotter(s, d, t):
     # anonymous tier caps results; an API key (Authorization: Bearer) lifts the cap
     # and returns the full CT history, which is what matters for large domains.
     headers = {"Authorization": f"Bearer {CERTSPOTTER_API_KEY}"} if CERTSPOTTER_API_KEY else {}
-    pages = 200 if CERTSPOTTER_API_KEY else 20
+    pages = (6 if CERTSPOTTER_API_KEY else 3) if FAST else (200 if CERTSPOTTER_API_KEY else 20)
     out, after = set(), ""
     for _ in range(pages):
         try:
@@ -145,10 +154,12 @@ def src_virustotal(s, d, t):
     # VT caps page size at 40; paginate via links.next. Stop on rate-limit (429)
     # rather than hammering the free-tier quota (4 req/min, 500/day).
     url = f"https://www.virustotal.com/api/v3/domains/{d}/subdomains?limit=40"
-    for _ in range(40):
+    for _ in range(8 if FAST else 40):
         try:
             r = s.get(url, headers={"x-apikey": VT_API_KEY}, timeout=t)
             if r.status_code == 429:
+                if FAST:
+                    break  # don't block the parallel pool on the 4 req/min quota
                 time.sleep(16)
                 continue
             if r.status_code != 200:
@@ -186,8 +197,10 @@ def src_urlscan(s, d, t):
 
 
 def src_wayback(s, d, t):
+    lim = 8000 if FAST else 50000
     r = _get(s, f"https://web.archive.org/cdx/search/cdx?url=*.{d}&output=json"
-                f"&fl=original&collapse=urlkey&limit=50000", max(t, 90), retries=4)
+                f"&fl=original&collapse=urlkey&limit={lim}",
+             t if FAST else max(t, 90), retries=1 if FAST else 4)
     out = set()
     try:
         rows = r.json()
@@ -231,13 +244,56 @@ def src_bufferover(s, d, t):
     return out
 
 
+def src_hudsonrock(s, d, t):
+    # Hosts harvested from infostealer-malware logs (surfaces internal/login hosts).
+    r = _get(s, "https://cavalier.hudsonrock.com/api/json/v2/osint-tools/"
+                f"search-by-domain?domain={d}", t, retries=1)
+    return set(re.findall(r"[\w.\-]+\.%s" % re.escape(d), r.text, re.I))
+
+
+def src_sitedossier(s, d, t):
+    # Community subdomain DB; HTML, paginated via /parent/<domain>/<offset>.
+    out, url = set(), f"http://www.sitedossier.com/parent/{d}"
+    for _ in range(2 if FAST else 6):
+        try:
+            r = s.get(url, timeout=t)
+        except Exception:  # noqa: BLE001
+            break
+        out.update(re.findall(r"[\w.\-]+\.%s" % re.escape(d), r.text, re.I))
+        m = re.search(r'href="(/parent/%s/\d+)"' % re.escape(d), r.text)
+        if not m:
+            break
+        url = "http://www.sitedossier.com" + m.group(1)
+    return out
+
+
+def src_entrust(s, d, t):
+    # Entrust CT search — an independent CT vantage point (covers crt.sh gaps).
+    r = _get(s, "https://ctsearch.entrust.com/api/v1/certificates?fields=subjectDN"
+                f"&domain={d}&includeExpired=true&exactMatch=false"
+                f"&limitExceeded=false&page=1", t, retries=1)
+    return set(re.findall(r"[\w.\-]+\.%s" % re.escape(d), r.text, re.I))
+
+
+def src_threatcrowd(s, d, t):
+    r = _get(s, f"https://www.threatcrowd.org/searchApi/v2/domain/report/?domain={d}",
+             t, retries=1)
+    try:
+        return set(r.json().get("subdomains", []))
+    except Exception:  # noqa: BLE001
+        return set()
+
+
 # alienvault now requires authentication (HTTP 429 for anonymous) and bufferover is
-# offline; both are kept as functions but excluded from the default set.
+# offline; both are kept as functions but excluded from the default set. The default
+# set mirrors subfinder's no-key sources plus our keyed sources (VT/Certspotter),
+# so DNSsifter's passive union is a superset of subfinder's.
 SOURCES = {
     "crtsh": src_crtsh, "certspotter": src_certspotter, "hackertarget": src_hackertarget,
     "rapiddns": src_rapiddns, "urlscan": src_urlscan, "wayback": src_wayback,
     "anubis": src_anubis, "digitorus": src_digitorus, "commoncrawl": src_commoncrawl,
-    "virustotal": src_virustotal,
+    "virustotal": src_virustotal, "hudsonrock": src_hudsonrock,
+    "sitedossier": src_sitedossier, "entrust": src_entrust, "threatcrowd": src_threatcrowd,
 }
 
 
@@ -251,17 +307,19 @@ def clean(names, domain):
     return out
 
 
-# crt.sh is the highest-yield source but aggressively rate-limits repeated/parallel
-# hits from one IP. We therefore fetch it on its own, patiently, OUTSIDE the
-# concurrent pool so it is not competing with the other requests.
-PATIENT = {"crtsh"}
+# In the default (thorough) mode crt.sh is fetched on its own, patiently, outside
+# the pool (it rate-limits parallel hits). In FAST mode (env DNSSIFTER_FAST=1) every
+# source — crt.sh included — runs concurrently with a short timeout so the whole
+# stage finishes in seconds and scales to thousands of domains; the other CT sources
+# cover any crt.sh miss.
+PATIENT = set() if FAST else {"crtsh"}
 
 
-def gather(domain, timeout=45, insecure=False, workers=6, verbose=False):
-    """Query all sources; return (union_set, per_source_counts). crt.sh is fetched
-    on its own with patience; the remaining sources run concurrently."""
+def gather(domain, timeout=45, insecure=False, workers=None, verbose=False):
+    """Query all sources; return (union_set, per_source_counts)."""
     s = _session(insecure)
     results, counts = set(), {}
+    workers = workers or (len(SOURCES) if FAST else 6)
 
     for name in PATIENT:
         try:
@@ -274,9 +332,13 @@ def gather(domain, timeout=45, insecure=False, workers=6, verbose=False):
             print(f"  [{name}] {len(got)}", file=sys.stderr)
 
     concurrent = {n: fn for n, fn in SOURCES.items() if n not in PATIENT}
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        fut = {pool.submit(fn, s, domain, timeout): n for n, fn in concurrent.items()}
-        for f in as_completed(fut):
+    # Global deadline so a single slow/hanging source never stalls the stage: in
+    # FAST mode we collect whatever finished within the budget and abandon stragglers.
+    deadline = (timeout + 25) if FAST else None  # room for crt.sh's single long attempt
+    pool = ThreadPoolExecutor(max_workers=workers)
+    fut = {pool.submit(fn, s, domain, timeout): n for n, fn in concurrent.items()}
+    try:
+        for f in as_completed(fut, timeout=deadline):
             name = fut[f]
             try:
                 got = clean(f.result(), domain)
@@ -288,6 +350,12 @@ def gather(domain, timeout=45, insecure=False, workers=6, verbose=False):
             results |= got
             if verbose:
                 print(f"  [{name}] {len(got)}", file=sys.stderr)
+    except FuturesTimeout:
+        if verbose:
+            pending = [n for f, n in fut.items() if not f.done()]
+            print(f"  [deadline] abandoned slow sources: {pending}", file=sys.stderr)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
     return results, counts
 
 

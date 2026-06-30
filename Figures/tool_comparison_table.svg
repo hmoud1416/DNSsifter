@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1004" height="510" viewBox="0 0 1004 510" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1004" height="510" rx="14" fill="#ffffff" stroke="#d6dbe0"/>
+<text x="28" y="40" font-size="25" font-weight="700" fill="#1f4e79">DNSsifter vs. Subdomain-Enumeration Tools</text>
+<text x="28" y="63" font-size="14" fill="#5b6168">Validated benchmark — every candidate re-resolved through trusted resolvers (Google / Cloudflare / OpenDNS). Best per column highlighted.</text>
+<rect x="28" y="78" width="948" height="60" rx="8" fill="#1f4e79"/>
+<text x="42" y="104" font-size="15.5" font-weight="700" fill="#ffffff" text-anchor="start">Tool</text>
+<text x="298" y="104" font-size="15.5" font-weight="700" fill="#ffffff" text-anchor="end">Reported</text>
+<text x="298" y="123" font-size="11.5" fill="#c7d6e6" text-anchor="end">raw names</text>
+<text x="418" y="104" font-size="15.5" font-weight="700" fill="#ffffff" text-anchor="end">Validated</text>
+<text x="418" y="123" font-size="11.5" fill="#c7d6e6" text-anchor="end">live hosts</text>
+<text x="528" y="104" font-size="15.5" font-weight="700" fill="#ffffff" text-anchor="end">Recall</text>
+<text x="528" y="123" font-size="11.5" fill="#c7d6e6" text-anchor="end">vs. live GT</text>
+<text x="644" y="104" font-size="15.5" font-weight="700" fill="#ffffff" text-anchor="end">Precision</text>
+<text x="644" y="123" font-size="11.5" fill="#c7d6e6" text-anchor="end">live / raw</text>
+<text x="760" y="104" font-size="15.5" font-weight="700" fill="#ffffff" text-anchor="end">Runtime</text>
+<text x="760" y="123" font-size="11.5" fill="#c7d6e6" text-anchor="end">s / domain</text>
+<text x="852" y="104" font-size="15.5" font-weight="700" fill="#ffffff" text-anchor="end">Depth</text>
+<text x="852" y="123" font-size="11.5" fill="#c7d6e6" text-anchor="end">levels</text>
+<text x="962" y="104" font-size="15.5" font-weight="700" fill="#ffffff" text-anchor="end">Unique</text>
+<text x="962" y="123" font-size="11.5" fill="#c7d6e6" text-anchor="end">live only</text>
+<rect x="28" y="138" width="948" height="46" fill="#e7f4e4"/>
+<rect x="28" y="138" width="5" height="46" fill="#1d7a32"/>
+<text x="44" y="167" font-size="15.5" font-weight="700" fill="#1f4e79" text-anchor="start">DNSsifter</text>
+<text x="298" y="167" font-size="14.5" font-weight="600" fill="#2b2f36" text-anchor="end">2,332</text>
+<text x="418" y="167" font-size="15" font-weight="700" fill="#1d7a32" text-anchor="end">2,332</text>
+<circle cx="371.0" cy="162" r="3" fill="#1d7a32"/>
+<text x="528" y="167" font-size="15" font-weight="700" fill="#1d7a32" text-anchor="end">0.828</text>
+<circle cx="481.0" cy="162" r="3" fill="#1d7a32"/>
+<text x="644" y="167" font-size="15" font-weight="700" fill="#1d7a32" text-anchor="end">1.000</text>
+<circle cx="597.0" cy="162" r="3" fill="#1d7a32"/>
+<text x="760" y="167" font-size="14.5" font-weight="600" fill="#2b2f36" text-anchor="end">52 s</text>
+<text x="852" y="167" font-size="15" font-weight="700" fill="#1d7a32" text-anchor="end">6</text>
+<circle cx="835.4" cy="162" r="3" fill="#1d7a32"/>
+<text x="962" y="167" font-size="14.5" font-weight="600" fill="#2b2f36" text-anchor="end">362</text>
+<line x1="28" y1="184" x2="976" y2="184" stroke="#d6dbe0"/>
+<rect x="28" y="184" width="948" height="46" fill="#f6f8fa"/>
+<text x="44" y="213" font-size="15.5" font-weight="700" fill="#2b2f36" text-anchor="start">Subfinder</text>
+<text x="298" y="213" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">18,842</text>
+<text x="418" y="213" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">2,243</text>
+<text x="528" y="213" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.797</text>
+<text x="644" y="213" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.119</text>
+<text x="760" y="213" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">22 s</text>
+<text x="852" y="213" font-size="15" font-weight="700" fill="#1d7a32" text-anchor="end">6</text>
+<circle cx="835.4" cy="208" r="3" fill="#1d7a32"/>
+<text x="962" y="213" font-size="15" font-weight="700" fill="#1d7a32" text-anchor="end">458</text>
+<circle cx="930.2" cy="208" r="3" fill="#1d7a32"/>
+<line x1="28" y1="230" x2="976" y2="230" stroke="#d6dbe0"/>
+<text x="44" y="259" font-size="15.5" font-weight="700" fill="#2b2f36" text-anchor="start">Assetfinder</text>
+<text x="298" y="259" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">2,537</text>
+<text x="418" y="259" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">1,234</text>
+<text x="528" y="259" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.438</text>
+<text x="644" y="259" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.486</text>
+<text x="760" y="259" font-size="15" font-weight="700" fill="#1d7a32" text-anchor="end">8 s</text>
+<circle cx="728.2" cy="254" r="3" fill="#1d7a32"/>
+<text x="852" y="259" font-size="15" font-weight="700" fill="#1d7a32" text-anchor="end">6</text>
+<circle cx="835.4" cy="254" r="3" fill="#1d7a32"/>
+<text x="962" y="259" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">3</text>
+<line x1="28" y1="276" x2="976" y2="276" stroke="#d6dbe0"/>
+<rect x="28" y="276" width="948" height="46" fill="#f6f8fa"/>
+<text x="44" y="305" font-size="15.5" font-weight="700" fill="#2b2f36" text-anchor="start">Findomain</text>
+<text x="298" y="305" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">1,382</text>
+<text x="418" y="305" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">680</text>
+<text x="528" y="305" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.242</text>
+<text x="644" y="305" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.492</text>
+<text x="760" y="305" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">60 s</text>
+<text x="852" y="305" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">5</text>
+<text x="962" y="305" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0</text>
+<line x1="28" y1="322" x2="976" y2="322" stroke="#d6dbe0"/>
+<text x="44" y="351" font-size="15.5" font-weight="700" fill="#2b2f36" text-anchor="start">Sublist3r</text>
+<text x="298" y="351" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">138</text>
+<text x="418" y="351" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">137</text>
+<text x="528" y="351" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.049</text>
+<text x="644" y="351" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.993</text>
+<text x="760" y="351" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">16 s</text>
+<text x="852" y="351" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">2</text>
+<text x="962" y="351" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">1</text>
+<line x1="28" y1="368" x2="976" y2="368" stroke="#d6dbe0"/>
+<rect x="28" y="368" width="948" height="46" fill="#f6f8fa"/>
+<text x="44" y="397" font-size="15.5" font-weight="700" fill="#2b2f36" text-anchor="start">Amass</text>
+<text x="298" y="397" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">5</text>
+<text x="418" y="397" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">3</text>
+<text x="528" y="397" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.001</text>
+<text x="644" y="397" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0.600</text>
+<text x="760" y="397" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">161 s</text>
+<text x="852" y="397" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0</text>
+<text x="962" y="397" font-size="14.5" font-weight="400" fill="#2b2f36" text-anchor="end">0</text>
+<line x1="28" y1="414" x2="976" y2="414" stroke="#d6dbe0"/>
+<text x="28" y="440" font-size="12" fill="#5b6168">DNSsifter is the only tool that is simultaneously the most complete (highest recall) and entirely live (precision 1.000).</text>
+<text x="28" y="459" font-size="12" fill="#5b6168">Subfinder reports the most raw names but 88% no longer resolve. * Amass v5 needs an API-key datasource config; out-of-the-box it returns almost nothing.</text>
+</svg>
