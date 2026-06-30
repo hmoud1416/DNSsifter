@@ -1,18 +1,37 @@
-# Aggregated, anonymized CDRI data for the observable Saudi DNS ecosystem.
-# Source: "A Longitudinal Assessment of DNS Resilience and Robustness in Saudi Arabia"
-#   (Alharbi et al.), Table 8 — Normalized CDRI Dimension Scores by Domain Category.
-# Active measurement campaign: 2024-09-04 .. 2024-12-30 (multiple rounds, averaged).
+# Aggregated CDRI dimension scores for the observable Saudi DNS ecosystem.
 #
-# Columns S1..S7 are health-oriented dimension scores normalized to [0,1] with
-# min-max normalization ACROSS the ten categories (risk metrics inverted first):
-#   S1 = authoritative nameserver redundancy + topological (AS) diversity
-#   S2 = delegation correctness (inverse of full+partial defective delegation)
-#   S3 = third-party provider independence (inverse of dependency)
-#   S4 = parent-child consistency (inverse of PCI)
-#   S5 = Anycast adoption
-#   S6 = DNSSEC health (adoption + validation success)
-#   S7 = caching efficiency (hit rate + TTL/latency)
-# CDRI = 0.20*S1 + 0.15*S2 + 0.10*S3 + 0.15*S4 + 0.10*S5 + 0.20*S6 + 0.10*S7
+# Source:
+# Alharbi et al.,
+# "A Longitudinal Assessment of DNS Resilience and Robustness in Saudi Arabia."
+#
+# This file contains the normalized dimension scores used to compute the
+# Composite DNS Resilience Index (CDRI) reported in the paper.
+#
+# Active measurement campaign:
+# 2024-09-04 to 2024-12-30.
+# Values were derived from repeated measurements after persistence filtering,
+# as described in the manuscript.
+#
+# Columns S1-S7 are health-oriented resilience scores normalized to the
+# interval [0,1] using min-max normalization across the evaluated Saudi
+# domain categories. Risk-oriented metrics were inverted before normalization.
+#
+# S1 = Authoritative nameserver redundancy and topological diversity
+# S2 = Delegation correctness (inverse of defective delegation)
+# S3 = Third-party provider independence (inverse of provider dependency)
+# S4 = Parent-child consistency (inverse of PCI)
+# S5 = Anycast adoption
+# S6 = DNSSEC health (adoption and successful validation)
+# S7 = Caching efficiency (hit rate, latency, and TTL)
+#
+# Composite DNS Resilience Index (CDRI):
+# CDRI = 0.20*S1 + 0.15*S2 + 0.10*S3 + 0.15*S4 +
+#        0.10*S5 + 0.20*S6 + 0.10*S7
+#
+# Higher CDRI values indicate stronger overall DNS resilience.
+#
+# This file contains only aggregated category-level scores and does not
+# include domain-level measurements or sensitive infrastructure data.
 category,S1,S2,S3,S4,S5,S6,S7
 .sa,0.692,0.859,0.659,1.000,0.184,0.108,1.000
 .gov.sa,0.340,0.251,0.553,0.000,1.000,1.000,0.878
