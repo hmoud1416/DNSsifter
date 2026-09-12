@@ -594,9 +594,7 @@ DNSsifter/
 
 If you use DNSsifter or the CDRI data in your research, please cite:
 
-> Alharbi, F., Alhalmani, H., Showail, A., & Alhuzali, A.
-> *A Longitudinal Assessment of DNS Resilience and Robustness in Saudi Arabia.*
-> Scientific Reports (2025).
+> Alharbi, Fatemah, et al. "A longitudinal assessment of DNS resilience and robustness in Saudi Arabia." Scientific Reports (2026).
 
 Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
 
