@@ -592,11 +592,32 @@ DNSsifter/
 
 ## Citation
 
-If you use DNSsifter or the CDRI data in your research, please cite:
+If you use **DNSsifter**, the **Composite DNS Resilience Index (CDRI)**, or the associated research data in your work, please cite our published paper.
 
-> Alharbi, Fatemah, et al. "A longitudinal assessment of DNS resilience and robustness in Saudi Arabia." Scientific Reports (2026).
+### Published Paper
 
-Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
+Alharbi, F., Alhalmani, H., Showail, A., & Alhuzali, A. (2026). A longitudinal assessment of DNS resilience and robustness in Saudi Arabia. *Scientific Reports, 16*, Article 28479. https://doi.org/10.1038/s41598-026-67078-9
+
+### BibTeX
+
+```bibtex
+@article{alharbi2026longitudinal,
+  title     = {A longitudinal assessment of DNS resilience
+               and robustness in Saudi Arabia},
+  author    = {Alharbi, Fatemah and Alhalmani, Hamoud
+               and Showail, Ahmad and Alhuzali, Abeer},
+  journal   = {Scientific Reports},
+  volume    = {16},
+  pages     = {28479},
+  year      = {2026},
+  doi       = {10.1038/s41598-026-67078-9},
+  url       = {https://doi.org/10.1038/s41598-026-67078-9},
+  publisher = {Springer Nature}
+}
+```
+
+Machine-readable citation metadata is also available in [`CITATION.cff`](CITATION.cff).
+
 
 ---
 
